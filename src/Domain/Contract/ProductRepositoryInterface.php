@@ -35,9 +35,9 @@ interface ProductRepositoryInterface
     public function getVariations(int $productId): array;
 
     /**
-     * Update a product's price.
+     * Update a product's price and optional sale schedule.
      */
-    public function updatePrice(int $id, ?float $regularPrice, ?float $salePrice): void;
+    public function updatePrice(int $id, ?float $regularPrice, ?float $salePrice, ?string $dateFrom = null, ?string $dateTo = null): void;
 
     /**
      * Update a product's stock. Optionally set stock status when management is disabled.

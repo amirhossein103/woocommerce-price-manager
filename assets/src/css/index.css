@@ -506,3 +506,29 @@
     align-items: center;
     gap: var(--wpm-space-3);
 }
+
+/* === Sale Schedule Button & Modal === */
+.wpm-schedule-btn {
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-radius: var(--wpm-radius-sm) !important;
+}
+
+.wpm-schedule-btn:hover {
+    background: var(--wpm-gray-100) !important;
+    border-color: var(--wpm-border) !important;
+    transform: scale(1.1);
+}
+
+.wpm-schedule-btn.is-scheduled {
+    background: #e5f5fa !important;
+    border-color: #0085ba !important;
+    box-shadow: 0 0 0 1px #0085ba inset;
+}
+
+.wpm-schedule-btn.is-scheduled:hover {
+    background: #d0edfa !important;
+}
+

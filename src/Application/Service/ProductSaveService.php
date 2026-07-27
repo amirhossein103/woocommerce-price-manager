@@ -43,34 +43,66 @@ final class ProductSaveService
             ? ($changes['sale_price'] !== null && $changes['sale_price'] !== '' ? (float) $changes['sale_price'] : null)
             : $current->price?->salePrice;
 
-        if (array_key_exists('regular_price', $changes) || array_key_exists('sale_price', $changes)) {
+        $dateFrom = array_key_exists('date_on_sale_from', $changes)
+            ? ($changes['date_on_sale_from'] !== null ? (string) $changes['date_on_sale_from'] : '')
+            : $current->price?->dateOnSaleFrom;
+
+        $dateTo = array_key_exists('date_on_sale_to', $changes)
+            ? ($changes['date_on_sale_to'] !== null ? (string) $changes['date_on_sale_to'] : '')
+            : $current->price?->dateOnSaleTo;
+
+        if (array_key_exists('regular_price', $changes) || array_key_exists('sale_price', $changes) || array_key_exists('date_on_sale_from', $changes) || array_key_exists('date_on_sale_to', $changes)) {
             // Enforce domain invariants via PricingEngine
-            $this->pricingEngine->createSnapshot($productId, $regPrice, $salePrice);
+            $this->pricingEngine->createSnapshot($productId, $regPrice, $salePrice, $dateFrom, $dateTo);
 
             $oldReg = $current->price?->regularPrice;
-            if ($regPrice !== $oldReg) {
-                $this->productRepo->updatePrice($productId, $regPrice, $salePrice);
-                $this->changeLog->record(
-                    $productId,
-                    $userId,
-                    'regular_price',
-                    $oldReg !== null ? (string) $oldReg : null,
-                    $regPrice !== null ? (string) $regPrice : '',
-                    'manual_edit'
-                );
-            }
-
             $oldSale = $current->price?->salePrice;
-            if ($salePrice !== $oldSale) {
-                $this->productRepo->updatePrice($productId, $regPrice, $salePrice);
-                $this->changeLog->record(
-                    $productId,
-                    $userId,
-                    'sale_price',
-                    $oldSale !== null ? (string) $oldSale : null,
-                    $salePrice !== null ? (string) $salePrice : '',
-                    'manual_edit'
-                );
+            $oldDateFrom = $current->price?->dateOnSaleFrom;
+            $oldDateTo = $current->price?->dateOnSaleTo;
+
+            if ($regPrice !== $oldReg || $salePrice !== $oldSale || $dateFrom !== $oldDateFrom || $dateTo !== $oldDateTo) {
+                $this->productRepo->updatePrice($productId, $regPrice, $salePrice, $dateFrom, $dateTo);
+
+                if ($regPrice !== $oldReg) {
+                    $this->changeLog->record(
+                        $productId,
+                        $userId,
+                        'regular_price',
+                        $oldReg !== null ? (string) $oldReg : null,
+                        $regPrice !== null ? (string) $regPrice : '',
+                        'manual_edit'
+                    );
+                }
+                if ($salePrice !== $oldSale) {
+                    $this->changeLog->record(
+                        $productId,
+                        $userId,
+                        'sale_price',
+                        $oldSale !== null ? (string) $oldSale : null,
+                        $salePrice !== null ? (string) $salePrice : '',
+                        'manual_edit'
+                    );
+                }
+                if ($dateFrom !== $oldDateFrom && array_key_exists('date_on_sale_from', $changes)) {
+                    $this->changeLog->record(
+                        $productId,
+                        $userId,
+                        'date_on_sale_from',
+                        $oldDateFrom !== null ? (string) $oldDateFrom : null,
+                        $dateFrom !== null && $dateFrom !== '' ? (string) $dateFrom : '',
+                        'manual_edit'
+                    );
+                }
+                if ($dateTo !== $oldDateTo && array_key_exists('date_on_sale_to', $changes)) {
+                    $this->changeLog->record(
+                        $productId,
+                        $userId,
+                        'date_on_sale_to',
+                        $oldDateTo !== null ? (string) $oldDateTo : null,
+                        $dateTo !== null && $dateTo !== '' ? (string) $dateTo : '',
+                        'manual_edit'
+                    );
+                }
             }
         }
 

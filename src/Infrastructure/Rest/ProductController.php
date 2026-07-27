@@ -137,6 +137,12 @@ final class ProductController extends \WP_REST_Controller
         if (array_key_exists('sale_price', $params)) {
             $changes['sale_price'] = $params['sale_price'];
         }
+        if (array_key_exists('date_on_sale_from', $params)) {
+            $changes['date_on_sale_from'] = $params['date_on_sale_from'];
+        }
+        if (array_key_exists('date_on_sale_to', $params)) {
+            $changes['date_on_sale_to'] = $params['date_on_sale_to'];
+        }
         if (array_key_exists('stock_quantity', $params)) {
             $changes['stock_quantity'] = $params['stock_quantity'];
         }
@@ -252,6 +258,14 @@ final class ProductController extends \WP_REST_Controller
                 'sanitize_callback' => 'sanitize_text_field',
             ],
             'status' => [
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ],
+            'date_on_sale_from' => [
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ],
+            'date_on_sale_to' => [
                 'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ],

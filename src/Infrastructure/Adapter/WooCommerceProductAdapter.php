@@ -111,7 +111,7 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         return $variations;
     }
 
-    public function updatePrice(int $id, ?float $regularPrice, ?float $salePrice): void
+    public function updatePrice(int $id, ?float $regularPrice, ?float $salePrice, ?string $dateFrom = null, ?string $dateTo = null): void
     {
         if (!function_exists('wc_get_product')) {
             return;
@@ -124,6 +124,12 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
 
         $wcProduct->set_regular_price($regularPrice !== null ? (string) $regularPrice : '');
         $wcProduct->set_sale_price($salePrice !== null ? (string) $salePrice : '');
+        if ($dateFrom !== null && method_exists($wcProduct, 'set_date_on_sale_from')) {
+            $wcProduct->set_date_on_sale_from($dateFrom !== '' ? $dateFrom : '');
+        }
+        if ($dateTo !== null && method_exists($wcProduct, 'set_date_on_sale_to')) {
+            $wcProduct->set_date_on_sale_to($dateTo !== '' ? $dateTo : '');
+        }
         $wcProduct->save();
     }
 
@@ -177,10 +183,14 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
                 $pid = (int) $wcProduct->get_id();
                 $reg = $wcProduct->get_regular_price();
                 $sale = $wcProduct->get_sale_price();
+                [$dateFrom, $dateTo] = $this->extractSaleDates($wcProduct);
                 $snapshots[$pid] = new PriceSnapshot(
                     $pid,
                     $reg !== '' && $reg !== null ? (float) $reg : null,
-                    $sale !== '' && $sale !== null ? (float) $sale : null
+                    $sale !== '' && $sale !== null ? (float) $sale : null,
+                    null,
+                    $dateFrom,
+                    $dateTo
                 );
             }
         }
@@ -229,10 +239,14 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         $id = (int) $wcProduct->get_id();
         $reg = $wcProduct->get_regular_price();
         $sale = $wcProduct->get_sale_price();
+        [$dateFrom, $dateTo] = $this->extractSaleDates($wcProduct);
         $priceSnapshot = new PriceSnapshot(
             $id,
             $reg !== '' && $reg !== null ? (float) $reg : null,
-            $sale !== '' && $sale !== null ? (float) $sale : null
+            $sale !== '' && $sale !== null ? (float) $sale : null,
+            null,
+            $dateFrom,
+            $dateTo
         );
 
         $managed = (bool) $wcProduct->get_manage_stock();
@@ -290,10 +304,14 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
 
         $reg = $wcVariation->get_regular_price();
         $sale = $wcVariation->get_sale_price();
+        [$dateFrom, $dateTo] = $this->extractSaleDates($wcVariation);
         $priceSnapshot = new PriceSnapshot(
             $id,
             $reg !== '' && $reg !== null ? (float) $reg : null,
-            $sale !== '' && $sale !== null ? (float) $sale : null
+            $sale !== '' && $sale !== null ? (float) $sale : null,
+            null,
+            $dateFrom,
+            $dateTo
         );
 
         $managed = (bool) $wcVariation->get_manage_stock();
@@ -314,5 +332,14 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
             $priceSnapshot,
             $stockSnapshot
         );
+    }
+
+    private function extractSaleDates(object $wcObj): array
+    {
+        $fromObj = method_exists($wcObj, 'get_date_on_sale_from') ? $wcObj->get_date_on_sale_from('edit') : null;
+        $dateFrom = $fromObj !== null && is_object($fromObj) && method_exists($fromObj, 'date') ? $fromObj->date('Y-m-d') : (is_string($fromObj) && $fromObj !== '' ? $fromObj : null);
+        $toObj = method_exists($wcObj, 'get_date_on_sale_to') ? $wcObj->get_date_on_sale_to('edit') : null;
+        $dateTo = $toObj !== null && is_object($toObj) && method_exists($toObj, 'date') ? $toObj->date('Y-m-d') : (is_string($toObj) && $toObj !== '' ? $toObj : null);
+        return [$dateFrom, $dateTo];
     }
 }

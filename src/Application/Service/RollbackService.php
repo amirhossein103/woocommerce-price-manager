@@ -46,7 +46,7 @@ final class RollbackService
         $field = $record->field;
         $restoredValue = $record->oldValue;
 
-        if ($field === 'regular_price' || $field === 'sale_price') {
+        if ($field === 'regular_price' || $field === 'sale_price' || $field === 'date_on_sale_from' || $field === 'date_on_sale_to') {
             $reg = $field === 'regular_price'
                 ? ($restoredValue !== null && $restoredValue !== '' ? (float) $restoredValue : null)
                 : $product->price?->regularPrice;
@@ -55,11 +55,25 @@ final class RollbackService
                 ? ($restoredValue !== null && $restoredValue !== '' ? (float) $restoredValue : null)
                 : $product->price?->salePrice;
 
-            // Enforce domain rules (e.g. sale < regular)
-            $this->pricingEngine->createSnapshot($productId, $reg, $sale);
+            $dateFrom = $field === 'date_on_sale_from'
+                ? ($restoredValue !== null ? (string) $restoredValue : '')
+                : $product->price?->dateOnSaleFrom;
 
-            $currentVal = $field === 'regular_price' ? $product->price?->regularPrice : $product->price?->salePrice;
-            $this->productRepo->updatePrice($productId, $reg, $sale);
+            $dateTo = $field === 'date_on_sale_to'
+                ? ($restoredValue !== null ? (string) $restoredValue : '')
+                : $product->price?->dateOnSaleTo;
+
+            // Enforce domain rules (e.g. sale < regular)
+            $this->pricingEngine->createSnapshot($productId, $reg, $sale, $dateFrom, $dateTo);
+
+            $currentVal = match ($field) {
+                'regular_price' => $product->price?->regularPrice !== null ? (string) $product->price?->regularPrice : null,
+                'sale_price' => $product->price?->salePrice !== null ? (string) $product->price?->salePrice : null,
+                'date_on_sale_from' => $product->price?->dateOnSaleFrom,
+                'date_on_sale_to' => $product->price?->dateOnSaleTo,
+                default => null,
+            };
+            $this->productRepo->updatePrice($productId, $reg, $sale, $dateFrom, $dateTo);
 
             $newRecordId = $this->changeLog->record(
                 $productId,

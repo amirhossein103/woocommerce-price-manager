@@ -6,9 +6,10 @@ import EditableCell from './EditableCell';
 import HistoryDrawer from './HistoryDrawer';
 import BulkToolbar from './BulkToolbar';
 import LiveRegion from './LiveRegion';
+import SaleScheduleModal from './SaleScheduleModal';
 import { formatPrice } from '../utils/formatters';
 
-function VariationRow( { variation, parentId, parentManageStock, onAnnouncement } ) {
+function VariationRow( { variation, parentId, parentManageStock, onAnnouncement, onOpenSchedule } ) {
     const { updateProduct } = useDispatch( 'wpm/products' );
     const isVarManaged = !!( variation.stock?.is_managed ?? variation.stock?.manage_stock );
 
@@ -78,21 +79,33 @@ function VariationRow( { variation, parentId, parentManageStock, onAnnouncement 
                 />
             </td>
             <td className="wpm-cell--sale-price">
-                <EditableCell
-                    id={ variation.id }
-                    field="sale_price"
-                    value={ variation.price?.sale_price }
-                    type="price"
-                    regularPrice={ variation.price?.regular_price }
-                    onSaveSuccess={ () => onAnnouncement?.( __( 'Variation sale price updated', 'woo-price-manager' ), 'polite' ) }
-                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <EditableCell
+                        id={ variation.id }
+                        field="sale_price"
+                        value={ variation.price?.sale_price }
+                        type="price"
+                        regularPrice={ variation.price?.regular_price }
+                        onSaveSuccess={ () => onAnnouncement?.( __( 'Variation sale price updated', 'woo-price-manager' ), 'polite' ) }
+                    />
+                    <Button
+                        isSmall
+                        variant="tertiary"
+                        className={`wpm-schedule-btn ${(variation.price?.date_on_sale_from || variation.price?.date_on_sale_to) ? 'is-scheduled' : ''}`}
+                        onClick={ () => onOpenSchedule?.( { ...variation, name: `Variation #${variation.id}` } ) }
+                        title={ (variation.price?.date_on_sale_from || variation.price?.date_on_sale_to) ? sprintf( __( 'Scheduled: %s to %s', 'woo-price-manager' ), variation.price?.date_on_sale_from || 'Now', variation.price?.date_on_sale_to || 'Forever' ) : __( 'Schedule Sale Dates', 'woo-price-manager' ) }
+                        style={{ minWidth: '24px', padding: '2px 4px', fontSize: '14px', lineHeight: 1 }}
+                    >
+                        📅
+                    </Button>
+                </div>
             </td>
             <td className="wpm-cell--actions"></td>
         </tr>
     );
 }
 
-function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnnouncement } ) {
+function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnnouncement, onOpenSchedule } ) {
     const [ isExpanded, setIsExpanded ] = useState( false );
     const { variations } = useSelect( ( select ) => ( {
         variations: select( 'wpm/products' ).getVariations( product.id ),
@@ -208,14 +221,26 @@ function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnn
                     { isVariable ? (
                         <span className="wpm-cell-readonly">{ formatPrice( product.price?.sale_price ) }</span>
                     ) : (
-                        <EditableCell
-                            id={ product.id }
-                            field="sale_price"
-                            value={ product.price?.sale_price }
-                            type="price"
-                            regularPrice={ product.price?.regular_price }
-                            onSaveSuccess={ () => onAnnouncement?.( sprintf( __( 'Sale price updated for %s', 'woo-price-manager' ), product.name ), 'polite' ) }
-                        />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <EditableCell
+                                id={ product.id }
+                                field="sale_price"
+                                value={ product.price?.sale_price }
+                                type="price"
+                                regularPrice={ product.price?.regular_price }
+                                onSaveSuccess={ () => onAnnouncement?.( sprintf( __( 'Sale price updated for %s', 'woo-price-manager' ), product.name ), 'polite' ) }
+                            />
+                            <Button
+                                isSmall
+                                variant="tertiary"
+                                className={`wpm-schedule-btn ${(product.price?.date_on_sale_from || product.price?.date_on_sale_to) ? 'is-scheduled' : ''}`}
+                                onClick={ () => onOpenSchedule?.( product ) }
+                                title={ (product.price?.date_on_sale_from || product.price?.date_on_sale_to) ? sprintf( __( 'Scheduled: %s to %s', 'woo-price-manager' ), product.price?.date_on_sale_from || 'Now', product.price?.date_on_sale_to || 'Forever' ) : __( 'Schedule Sale Dates', 'woo-price-manager' ) }
+                                style={{ minWidth: '24px', padding: '2px 4px', fontSize: '14px', lineHeight: 1 }}
+                            >
+                                📅
+                            </Button>
+                        </div>
                     ) }
                 </td>
                 <td className="wpm-cell--actions">
@@ -230,7 +255,7 @@ function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnn
                 </td>
             </tr>
             { isExpanded && isVariable && variations && variations.map( ( varItem ) => (
-                <VariationRow key={ varItem.id } variation={ varItem } parentId={ product.id } parentManageStock={ !!product.stock?.manage_stock } onAnnouncement={ onAnnouncement } />
+                <VariationRow key={ varItem.id } variation={ varItem } parentId={ product.id } parentManageStock={ !!product.stock?.manage_stock } onAnnouncement={ onAnnouncement } onOpenSchedule={ onOpenSchedule } />
             ) ) }
         </>
     );
@@ -247,6 +272,7 @@ export default function EditableTable() {
 
     const { fetchProducts, setFilters, setPage, toggleSelection, selectAll, clearSelection } = useDispatch( 'wpm/products' );
     const [ historyProduct, setHistoryProduct ] = useState( null );
+    const [ scheduleItem, setScheduleItem ] = useState( null );
     const [ announcement, setAnnouncement ] = useState( '' );
     const [ announceType, setAnnounceType ] = useState( 'polite' );
 
@@ -371,6 +397,7 @@ export default function EditableTable() {
                                         onToggleSelect={ toggleSelection }
                                         onOpenHistory={ ( prod ) => setHistoryProduct( prod ) }
                                         onAnnouncement={ handleAnnouncement }
+                                        onOpenSchedule={ ( item ) => setScheduleItem( item ) }
                                     />
                                 ) )
                             ) }
@@ -409,6 +436,13 @@ export default function EditableTable() {
                 isOpen={ !! historyProduct }
                 onClose={ () => setHistoryProduct( null ) }
                 onAnnouncement={ handleAnnouncement }
+            />
+
+            <SaleScheduleModal
+                isOpen={ !! scheduleItem }
+                onClose={ () => setScheduleItem( null ) }
+                product={ scheduleItem }
+                onSaveSuccess={ () => handleAnnouncement( sprintf( __( 'Sale schedule updated for %s', 'woo-price-manager' ), scheduleItem?.name || `ID #${scheduleItem?.id}` ), 'polite' ) }
             />
         </div>
     );

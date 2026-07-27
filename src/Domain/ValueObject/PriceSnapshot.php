@@ -20,7 +20,9 @@ final class PriceSnapshot
         public readonly int $productId,
         ?float $regularPrice,
         ?float $salePrice = null,
-        ?string $capturedAt = null
+        ?string $capturedAt = null,
+        public readonly ?string $dateOnSaleFrom = null,
+        public readonly ?string $dateOnSaleTo = null
     ) {
         if ($regularPrice !== null && $regularPrice < 0.0) {
             throw InvalidPriceException::negativePrice($regularPrice);
@@ -59,6 +61,8 @@ final class PriceSnapshot
             'sale_price' => $this->salePrice,
             'effective_price' => $this->effectivePrice,
             'captured_at' => $this->capturedAt,
+            'date_on_sale_from' => $this->dateOnSaleFrom,
+            'date_on_sale_to' => $this->dateOnSaleTo,
         ];
     }
 }

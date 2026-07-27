@@ -20,9 +20,9 @@ final class PricingEngine
      *
      * @throws InvalidPriceException When invariants are violated.
      */
-    public function createSnapshot(int $productId, ?float $regularPrice, ?float $salePrice = null): PriceSnapshot
+    public function createSnapshot(int $productId, ?float $regularPrice, ?float $salePrice = null, ?string $dateFrom = null, ?string $dateTo = null): PriceSnapshot
     {
-        return new PriceSnapshot($productId, $regularPrice, $salePrice);
+        return new PriceSnapshot($productId, $regularPrice, $salePrice, null, $dateFrom, $dateTo);
     }
 
     /**
