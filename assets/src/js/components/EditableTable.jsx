@@ -1,6 +1,6 @@
 import { useState, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Button, CheckboxControl, SearchControl, SelectControl, Spinner } from '@wordpress/components';
+import { Button, CheckboxControl, Notice, SearchControl, SelectControl, Spinner } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import EditableCell from './EditableCell';
 import HistoryDrawer from './HistoryDrawer';
@@ -254,6 +254,16 @@ export default function EditableTable() {
         fetchProducts();
     }, [ filters ] );
 
+    useEffect( () => {
+        if ( ! announcement ) {
+            return;
+        }
+        const timer = setTimeout( () => {
+            setAnnouncement( '' );
+        }, 7000 );
+        return () => clearTimeout( timer );
+    }, [ announcement ] );
+
     const handleAnnouncement = ( msg, type = 'polite' ) => {
         setAnnouncement( msg );
         setAnnounceType( type );
@@ -277,8 +287,25 @@ export default function EditableTable() {
                 <h1>{ __( 'WooCommerce Price & Stock Manager', 'woo-price-manager' ) }</h1>
                 <div className="wpm-header__stats">
                     <span>{ sprintf( __( 'Total Products: %d', 'woo-price-manager' ), meta.total || 0 ) }</span>
+                    { isLoading && (
+                        <span style={ { marginLeft: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#2271b1', fontWeight: '500' } }>
+                            <Spinner /> { __( 'Updating catalog...', 'woo-price-manager' ) }
+                        </span>
+                    ) }
                 </div>
             </header>
+
+            { announcement && (
+                <div className="wpm-visible-notice" style={ { marginBottom: '16px' } }>
+                    <Notice
+                        status={ announceType === 'assertive' ? 'error' : 'success' }
+                        isDismissible
+                        onRemove={ () => setAnnouncement( '' ) }
+                    >
+                        { announcement }
+                    </Notice>
+                </div>
+            ) }
 
             <div className="wpm-filter-bar">
                 <SearchControl

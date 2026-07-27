@@ -2,6 +2,16 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Modal, Button, Spinner } from '@wordpress/components';
 import { formatPrice } from '../utils/formatters';
 
+const formatPreviewVal = ( val, operation ) => {
+    if ( val === undefined || val === null || val === '' ) {
+        return '-';
+    }
+    if ( operation && typeof operation === 'string' && operation.startsWith( 'stock_' ) ) {
+        return val;
+    }
+    return formatPrice( val );
+};
+
 export default function PreviewModal( { isOpen, onClose, onConfirm, previewData, isExecuting, progress } ) {
     if ( ! isOpen ) {
         return null;
@@ -60,8 +70,8 @@ export default function PreviewModal( { isOpen, onClose, onConfirm, previewData,
                                     { data.slice( 0, 100 ).map( ( item ) => (
                                         <tr key={ item.product_id } className={ ! item.is_valid ? 'wpm-row--error' : '' }>
                                             <td>#{ item.product_id }</td>
-                                            <td>{ formatPrice( item.current_price ) }</td>
-                                            <td>{ formatPrice( item.calculated_price ) }</td>
+                                            <td>{ formatPreviewVal( item.original_price ?? item.current_price, item.operation_applied ) }</td>
+                                            <td>{ formatPreviewVal( item.calculated_price, item.operation_applied ) }</td>
                                             <td>
                                                 { item.is_valid ? (
                                                     <span className="wpm-status-icon wpm-status--valid">✓</span>
