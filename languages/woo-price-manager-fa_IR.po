@@ -1,0 +1,367 @@
+# Persian translation for WooCommerce Price Manager
+# Copyright (C) 2026 Amirhossein Lalehei
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Price Manager 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/amirhossein103/woocommerce-price-manager\n"
+"POT-Creation-Date: 2026-07-27 14:00+0330\n"
+"PO-Revision-Date: 2026-07-27 14:00+0330\n"
+"Last-Translator: Amirhossein Lalehei <https://github.com/amirhossein103>\n"
+"Language-Team: Persian <https://github.com/amirhossein103>\n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.4\n"
+"X-Domain: woo-price-manager\n"
+
+#: woocommerce-price-manager.php:3
+msgid "WooCommerce Price Manager"
+msgstr "مدیریت قیمت ووکامرس"
+
+#: woocommerce-price-manager.php:5
+msgid "High-performance WooCommerce operations plugin for store managers and pricing professionals."
+msgstr "افزونه عملیاتی پرقدرت ووکامرس برای مدیران فروشگاه و متخصصین قیمت‌گذاری."
+
+#: woocommerce-price-manager.php:23
+msgid "WooCommerce Price Manager requires PHP 8.0 or higher."
+msgstr "مدیریت قیمت ووکامرس نیازمند نسخه PHP 8.0 یا بالاتر است."
+
+#: src/Plugin.php:83
+msgid "WooCommerce Price Manager requires WooCommerce to be installed and active."
+msgstr "مدیریت قیمت ووکامرس نیازمند نصب و فعال بودن ووکامرس است."
+
+#: src/Infrastructure/Admin/AdminMenu.php:31
+msgid "Pricing Operations"
+msgstr "عملیات قیمت‌گذاری"
+
+#: src/Infrastructure/Admin/AdminMenu.php:32
+msgid "Price Manager"
+msgstr "مدیریت قیمت‌ها"
+
+#: src/Infrastructure/Admin/AdminMenu.php:45
+msgid "Manage product pricing, bulk updates, and change logs."
+msgstr "مدیریت قیمت محصولات، به‌روزرسانی‌های گروهی و تاریخچه تغییرات."
+
+#: assets/src/js/components/EditableTable.jsx:234
+msgid "WooCommerce Price & Stock Manager"
+msgstr "مدیریت قیمت و موجودی ووکامرس"
+
+#: assets/src/js/components/EditableTable.jsx:236
+#, javascript-format
+msgid "Total Products: %d"
+msgstr "کل محصولات: %d"
+
+#: assets/src/js/components/EditableTable.jsx:242
+msgid "Search Products"
+msgstr "جستجوی محصولات"
+
+#: assets/src/js/components/EditableTable.jsx:245
+msgid "Search by name or SKU..."
+msgstr "جستجو بر اساس نام یا کد محصول (SKU)..."
+
+#: assets/src/js/components/EditableTable.jsx:248
+msgid "Stock Status"
+msgstr "وضعیت موجودی"
+
+#: assets/src/js/components/EditableTable.jsx:251
+msgid "All Stock Statuses"
+msgstr "همه وضعیت‌های موجودی"
+
+#: assets/src/js/components/EditableTable.jsx:252
+msgid "In Stock"
+msgstr "موجود در انبار"
+
+#: assets/src/js/components/EditableTable.jsx:253
+msgid "Out of Stock"
+msgstr "ناموجود"
+
+#: assets/src/js/components/EditableTable.jsx:263
+msgid "Loading catalog..."
+msgstr "در حال بارگذاری فهرست محصولات..."
+
+#: assets/src/js/components/EditableTable.jsx:275
+msgid "Select all products on page"
+msgstr "انتخاب همه محصولات در این صفحه"
+
+#: assets/src/js/components/EditableTable.jsx:278
+msgid "Image"
+msgstr "تصویر"
+
+#: assets/src/js/components/EditableTable.jsx:279
+msgid "Product Name"
+msgstr "نام محصول"
+
+#: assets/src/js/components/EditableTable.jsx:280
+msgid "SKU"
+msgstr "شناسه (SKU)"
+
+#: assets/src/js/components/EditableTable.jsx:281
+msgid "Type"
+msgstr "نوع"
+
+#: assets/src/js/components/EditableTable.jsx:282
+msgid "Stock"
+msgstr "موجودی"
+
+#: assets/src/js/components/EditableTable.jsx:283
+msgid "Regular Price"
+msgstr "قیمت عادی"
+
+#: assets/src/js/components/EditableTable.jsx:284
+msgid "Sale Price"
+msgstr "قیمت فروش ویژه"
+
+#: assets/src/js/components/EditableTable.jsx:285
+msgid "History"
+msgstr "تاریخچه"
+
+#: assets/src/js/components/EditableTable.jsx:291
+msgid "No products found matching your filters."
+msgstr "هیچ محصولی با فیلترهای انتخابی یافت نشد."
+
+#: assets/src/js/components/EditableTable.jsx:309
+msgid "← Previous"
+msgstr "← قبلی"
+
+#: assets/src/js/components/EditableTable.jsx:312
+#, javascript-format
+msgid "Page %d of %d"
+msgstr "صفحه %d از %d"
+
+#: assets/src/js/components/EditableTable.jsx:318
+msgid "Next →"
+msgstr "بعدی →"
+
+#: assets/src/js/components/BulkToolbar.jsx:62
+#, javascript-format
+msgid "%d items selected"
+msgstr "%d مورد انتخاب شد"
+
+#: assets/src/js/components/BulkToolbar.jsx:64
+msgid "Clear"
+msgstr "پاک کردن"
+
+#: assets/src/js/components/BulkToolbar.jsx:70
+msgid "Operation"
+msgstr "عملیات"
+
+#: assets/src/js/components/BulkToolbar.jsx:73
+msgid "Increase Price (%)"
+msgstr "افزایش قیمت (درصدی)"
+
+#: assets/src/js/components/BulkToolbar.jsx:74
+msgid "Decrease Price (%)"
+msgstr "کاهش قیمت (درصدی)"
+
+#: assets/src/js/components/BulkToolbar.jsx:75
+msgid "Increase Price ($)"
+msgstr "افزایش قیمت (مبلغ ثابت)"
+
+#: assets/src/js/components/BulkToolbar.jsx:76
+msgid "Decrease Price ($)"
+msgstr "کاهش قیمت (مبلغ ثابت)"
+
+#: assets/src/js/components/BulkToolbar.jsx:77
+msgid "Set Stock Quantity"
+msgstr "تنظیم تعداد موجودی"
+
+#: assets/src/js/components/BulkToolbar.jsx:90
+msgid "Field"
+msgstr "فیلد هدف"
+
+#: assets/src/js/components/BulkToolbar.jsx:102
+msgid "Value"
+msgstr "مقدار"
+
+#: assets/src/js/components/BulkToolbar.jsx:111
+msgid "Preview Changes"
+msgstr "پیش‌نمایش تغییرات"
+
+#: assets/src/js/components/BulkToolbar.jsx:31
+msgid "Failed to generate preview"
+msgstr "خطا در ایجاد پیش‌نمایش"
+
+#: assets/src/js/components/BulkToolbar.jsx:32
+msgid "Error generating bulk preview"
+msgstr "خطا در دریافت پیش‌نمایش عملیات گروهی"
+
+#: assets/src/js/components/BulkToolbar.jsx:38
+msgid "Bulk operation started"
+msgstr "عملیات گروهی آغاز شد"
+
+#: assets/src/js/components/BulkToolbar.jsx:52
+#, javascript-format
+msgid "Bulk operation completed. Successfully updated %d products."
+msgstr "عملیات گروهی پایان یافت. %d محصول با موفقیت به‌روزرسانی شد."
+
+#: assets/src/js/components/BulkToolbar.jsx:57
+msgid "Bulk execution failed"
+msgstr "اجرای عملیات گروهی ناموفق بود"
+
+#: assets/src/js/components/BulkToolbar.jsx:58
+msgid "Error executing bulk operation"
+msgstr "خطا در اجرای عملیات گروهی"
+
+#: assets/src/js/components/PreviewModal.jsx:15
+msgid "Confirm Bulk Operation Preview"
+msgstr "تایید پیش‌نمایش عملیات گروهی"
+
+#: assets/src/js/components/PreviewModal.jsx:23
+#, javascript-format
+msgid "Total: %d"
+msgstr "مجموع: %d"
+
+#: assets/src/js/components/PreviewModal.jsx:26
+#, javascript-format
+msgid "Valid: %d"
+msgstr "معتبر: %d"
+
+#: assets/src/js/components/PreviewModal.jsx:30
+#, javascript-format
+msgid "Invalid: %d"
+msgstr "نامعتبر: %d"
+
+#: assets/src/js/components/PreviewModal.jsx:38
+msgid "Executing bulk operation... Please do not close your browser tab."
+msgstr "در حال اجرای عملیات گروهی... لطفاً تب مرورگر خود را نبندید."
+
+#: assets/src/js/components/PreviewModal.jsx:53
+msgid "Product ID"
+msgstr "شناسه محصول"
+
+#: assets/src/js/components/PreviewModal.jsx:54
+msgid "Current"
+msgstr "فعلی"
+
+#: assets/src/js/components/PreviewModal.jsx:55
+msgid "Calculated"
+msgstr "محاسبه‌شده"
+
+#: assets/src/js/components/PreviewModal.jsx:56
+msgid "Status"
+msgstr "وضعیت"
+
+#: assets/src/js/components/PreviewModal.jsx:78
+#, javascript-format
+msgid "Showing first 100 of %d products"
+msgstr "نمایش ۱۰۰ مورد اول از %d محصول"
+
+#: assets/src/js/components/PreviewModal.jsx:85
+msgid "Cancel"
+msgstr "انصراف"
+
+#: assets/src/js/components/PreviewModal.jsx:91
+#, javascript-format
+msgid "Apply to %d Products"
+msgstr "اعمال روی %d محصول"
+
+#: assets/src/js/components/HistoryDrawer.jsx:38
+#, javascript-format
+msgid "Change History: %s"
+msgstr "تاریخچه تغییرات: %s"
+
+#: assets/src/js/components/HistoryDrawer.jsx:44
+msgid "Loading history..."
+msgstr "در حال بارگذاری تاریخچه..."
+
+#: assets/src/js/components/HistoryDrawer.jsx:47
+msgid "No change history found for this product."
+msgstr "هیچ تاریخچه‌ای برای این محصول یافت نشد."
+
+#: assets/src/js/components/HistoryDrawer.jsx:27
+msgid "Rolling back change..."
+msgstr "در حال بازگردانی تغییر..."
+
+#: assets/src/js/components/HistoryDrawer.jsx:31
+msgid "Successfully rolled back change."
+msgstr "تغییر با موفقیت بازگردانی شد."
+
+#: assets/src/js/components/HistoryDrawer.jsx:34
+msgid "Failed to rollback change."
+msgstr "بازگردانی تغییر ناموفق بود."
+
+#: assets/src/js/components/HistoryDrawer.jsx:75
+msgid "Reverting..."
+msgstr "در حال بازگشت..."
+
+#: assets/src/js/components/HistoryDrawer.jsx:75
+msgid "Rollback"
+msgstr "بازگردانی"
+
+#: assets/src/js/components/EditableTable.jsx:34
+msgid "Var"
+msgstr "متغیر"
+
+#: assets/src/js/components/EditableTable.jsx:41
+msgid "Variation stock updated"
+msgstr "موجودی متغیر به‌روزرسانی شد"
+
+#: assets/src/js/components/EditableTable.jsx:50
+msgid "Variation regular price updated"
+msgstr "قیمت عادی متغیر به‌روزرسانی شد"
+
+#: assets/src/js/components/EditableTable.jsx:60
+msgid "Variation sale price updated"
+msgstr "قیمت فروش ویژه متغیر به‌روزرسانی شد"
+
+#: assets/src/js/components/EditableTable.jsx:90
+#, javascript-format
+msgid "Select %s"
+msgstr "انتخاب %s"
+
+#: assets/src/js/components/EditableTable.jsx:109
+msgid "▲ Hide Variations"
+msgstr "▲ بستن متغیرها"
+
+#: assets/src/js/components/EditableTable.jsx:109
+msgid "▼ Show Variations"
+msgstr "▼ نمایش متغیرها"
+
+#: assets/src/js/components/EditableTable.jsx:126
+#, javascript-format
+msgid "Stock updated for %s"
+msgstr "موجودی برای %s به‌روزرسانی شد"
+
+#: assets/src/js/components/EditableTable.jsx:139
+#, javascript-format
+msgid "Regular price updated for %s"
+msgstr "قیمت عادی برای %s به‌روزرسانی شد"
+
+#: assets/src/js/components/EditableTable.jsx:153
+#, javascript-format
+msgid "Sale price updated for %s"
+msgstr "قیمت فروش ویژه برای %s به‌روزرسانی شد"
+
+#: assets/src/js/components/EditableTable.jsx:161
+msgid "View Change History"
+msgstr "مشاهده تاریخچه تغییرات"
+
+#: assets/src/js/utils/validators.js:12
+msgid "Price must be a valid non-negative number."
+msgstr "قیمت باید یک عدد معتبر و غیرمنفی باشد."
+
+#: assets/src/js/utils/validators.js:17
+msgid "Cannot set sale price without a regular price."
+msgstr "امکان تعیین قیمت فروش ویژه بدون قیمت عادی وجود ندارد."
+
+#: assets/src/js/utils/validators.js:21
+#, javascript-format
+msgid "Sale price must be strictly less than regular price (%s)."
+msgstr "قیمت فروش ویژه باید کمتر از قیمت عادی (%s) باشد."
+
+#: assets/src/js/utils/validators.js:35
+msgid "Stock quantity must be a non-negative integer."
+msgstr "موجودی انبار باید یک عدد صحیح و غیرمنفی باشد."
+
+#: assets/src/js/components/EditableCell.jsx:84
+#, javascript-format
+msgid "Editing %s"
+msgstr "در حال ویرایش %s"
+
+#: assets/src/js/components/EditableCell.jsx:97
+#, javascript-format
+msgid "Edit %s"
+msgstr "ویرایش %s"

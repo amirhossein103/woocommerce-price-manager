@@ -1,0 +1,97 @@
+# ==============================================================================
+# WooCommerce Price Manager — Production Marketplace Distribution .gitignore
+# Tailored for clean Iranian marketplace distribution (Zhaket / RTL-Theme / etc.)
+# Ensures ONLY production-required files are committed and pushed so the repo
+# can be downloaded directly as a production-ready ZIP without dev bloat.
+# ==============================================================================
+
+# 1. Dependency & Build Directories (Dev-Only)
+node_modules/
+vendor/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# 2. Raw / Uncompiled Source Assets & Build Tools
+# Note: WordPress only enqueues assets/build/ in production; raw JSX/CSS is dev-only.
+assets/src/
+webpack.config.js
+package.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+composer.json
+composer.lock
+
+# 3. Test Suites & Test Configurations
+tests/
+phpunit.xml
+phpunit.xml.dist
+.phpunit.cache/
+.phpunit.result.cache
+coverage/
+.nyc_output/
+jest.config.js
+babel.config.js
+
+# 4. Dev Scripts & Internal Documentation
+scripts/
+docs/
+AGENTS.md
+TODO.md
+CHANGELOG.md
+
+# 5. AI Assistants & CI/CD Configuration
+.agents/
+.gemini/
+.antigravity/
+.github/
+.gitlab-ci.yml
+.gitattributes
+.editorconfig
+
+# 6. IDEs & Editors
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# 7. OS Generated & Temporary Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.log
+*.tmp
+*.cache
+scratch/
+.env
+.env.local
+
+# 8. Archives & Backups
+*.zip
+*.tar
+*.gz
+*.rar
+*.bak
+*.old
+
+# ==============================================================================
+# EXCLUSIONS (FILES EXPLICITLY REQUIRED IN PRODUCTION)
+# ==============================================================================
+!woocommerce-price-manager.php
+!src/
+!assets/build/
+!languages/
+!readme.txt
+!README.md
+!LICENSE

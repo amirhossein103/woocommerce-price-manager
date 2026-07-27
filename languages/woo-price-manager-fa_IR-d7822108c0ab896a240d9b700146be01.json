@@ -1,0 +1,263 @@
+{
+    "translation-revision-date": "2026-07-27 14:00+0330",
+    "generator": "WPM Custom Compiler",
+    "domain": "woo-price-manager",
+    "locale_data": {
+        "woo-price-manager": {
+            "": {
+                "domain": "woo-price-manager",
+                "lang": "fa_IR",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "%d items selected": [
+                "%d مورد انتخاب شد"
+            ],
+            "All Stock Statuses": [
+                "همه وضعیت‌های موجودی"
+            ],
+            "Apply to %d Products": [
+                "اعمال روی %d محصول"
+            ],
+            "Bulk execution failed": [
+                "اجرای عملیات گروهی ناموفق بود"
+            ],
+            "Bulk operation completed. Successfully updated %d products.": [
+                "عملیات گروهی پایان یافت. %d محصول با موفقیت به‌روزرسانی شد."
+            ],
+            "Bulk operation started": [
+                "عملیات گروهی آغاز شد"
+            ],
+            "Calculated": [
+                "محاسبه‌شده"
+            ],
+            "Cancel": [
+                "انصراف"
+            ],
+            "Cannot set sale price without a regular price.": [
+                "امکان تعیین قیمت فروش ویژه بدون قیمت عادی وجود ندارد."
+            ],
+            "Change History: %s": [
+                "تاریخچه تغییرات: %s"
+            ],
+            "Clear": [
+                "پاک کردن"
+            ],
+            "Confirm Bulk Operation Preview": [
+                "تایید پیش‌نمایش عملیات گروهی"
+            ],
+            "Current": [
+                "فعلی"
+            ],
+            "Decrease Price ($)": [
+                "کاهش قیمت (مبلغ ثابت)"
+            ],
+            "Decrease Price (%)": [
+                "کاهش قیمت (درصدی)"
+            ],
+            "Edit %s": [
+                "ویرایش %s"
+            ],
+            "Editing %s": [
+                "در حال ویرایش %s"
+            ],
+            "Error executing bulk operation": [
+                "خطا در اجرای عملیات گروهی"
+            ],
+            "Error generating bulk preview": [
+                "خطا در دریافت پیش‌نمایش عملیات گروهی"
+            ],
+            "Executing bulk operation... Please do not close your browser tab.": [
+                "در حال اجرای عملیات گروهی... لطفاً تب مرورگر خود را نبندید."
+            ],
+            "Failed to generate preview": [
+                "خطا در ایجاد پیش‌نمایش"
+            ],
+            "Failed to rollback change.": [
+                "بازگردانی تغییر ناموفق بود."
+            ],
+            "Field": [
+                "فیلد هدف"
+            ],
+            "High-performance WooCommerce operations plugin for store managers and pricing professionals.": [
+                "افزونه عملیاتی پرقدرت ووکامرس برای مدیران فروشگاه و متخصصین قیمت‌گذاری."
+            ],
+            "History": [
+                "تاریخچه"
+            ],
+            "Image": [
+                "تصویر"
+            ],
+            "In Stock": [
+                "موجود در انبار"
+            ],
+            "Increase Price ($)": [
+                "افزایش قیمت (مبلغ ثابت)"
+            ],
+            "Increase Price (%)": [
+                "افزایش قیمت (درصدی)"
+            ],
+            "Invalid: %d": [
+                "نامعتبر: %d"
+            ],
+            "Loading catalog...": [
+                "در حال بارگذاری فهرست محصولات..."
+            ],
+            "Loading history...": [
+                "در حال بارگذاری تاریخچه..."
+            ],
+            "Manage product pricing, bulk updates, and change logs.": [
+                "مدیریت قیمت محصولات، به‌روزرسانی‌های گروهی و تاریخچه تغییرات."
+            ],
+            "Next →": [
+                "بعدی →"
+            ],
+            "No change history found for this product.": [
+                "هیچ تاریخچه‌ای برای این محصول یافت نشد."
+            ],
+            "No products found matching your filters.": [
+                "هیچ محصولی با فیلترهای انتخابی یافت نشد."
+            ],
+            "Operation": [
+                "عملیات"
+            ],
+            "Out of Stock": [
+                "ناموجود"
+            ],
+            "Page %d of %d": [
+                "صفحه %d از %d"
+            ],
+            "Preview Changes": [
+                "پیش‌نمایش تغییرات"
+            ],
+            "Price Manager": [
+                "مدیریت قیمت‌ها"
+            ],
+            "Price must be a valid non-negative number.": [
+                "قیمت باید یک عدد معتبر و غیرمنفی باشد."
+            ],
+            "Pricing Operations": [
+                "عملیات قیمت‌گذاری"
+            ],
+            "Product ID": [
+                "شناسه محصول"
+            ],
+            "Product Name": [
+                "نام محصول"
+            ],
+            "Regular Price": [
+                "قیمت عادی"
+            ],
+            "Regular price updated for %s": [
+                "قیمت عادی برای %s به‌روزرسانی شد"
+            ],
+            "Reverting...": [
+                "در حال بازگشت..."
+            ],
+            "Rollback": [
+                "بازگردانی"
+            ],
+            "Rolling back change...": [
+                "در حال بازگردانی تغییر..."
+            ],
+            "SKU": [
+                "شناسه (SKU)"
+            ],
+            "Sale Price": [
+                "قیمت فروش ویژه"
+            ],
+            "Sale price must be strictly less than regular price (%s).": [
+                "قیمت فروش ویژه باید کمتر از قیمت عادی (%s) باشد."
+            ],
+            "Sale price updated for %s": [
+                "قیمت فروش ویژه برای %s به‌روزرسانی شد"
+            ],
+            "Search Products": [
+                "جستجوی محصولات"
+            ],
+            "Search by name or SKU...": [
+                "جستجو بر اساس نام یا کد محصول (SKU)..."
+            ],
+            "Select %s": [
+                "انتخاب %s"
+            ],
+            "Select all products on page": [
+                "انتخاب همه محصولات در این صفحه"
+            ],
+            "Set Stock Quantity": [
+                "تنظیم تعداد موجودی"
+            ],
+            "Showing first 100 of %d products": [
+                "نمایش ۱۰۰ مورد اول از %d محصول"
+            ],
+            "Status": [
+                "وضعیت"
+            ],
+            "Stock": [
+                "موجودی"
+            ],
+            "Stock Status": [
+                "وضعیت موجودی"
+            ],
+            "Stock quantity must be a non-negative integer.": [
+                "موجودی انبار باید یک عدد صحیح و غیرمنفی باشد."
+            ],
+            "Stock updated for %s": [
+                "موجودی برای %s به‌روزرسانی شد"
+            ],
+            "Successfully rolled back change.": [
+                "تغییر با موفقیت بازگردانی شد."
+            ],
+            "Total Products: %d": [
+                "کل محصولات: %d"
+            ],
+            "Total: %d": [
+                "مجموع: %d"
+            ],
+            "Type": [
+                "نوع"
+            ],
+            "Valid: %d": [
+                "معتبر: %d"
+            ],
+            "Value": [
+                "مقدار"
+            ],
+            "Var": [
+                "متغیر"
+            ],
+            "Variation regular price updated": [
+                "قیمت عادی متغیر به‌روزرسانی شد"
+            ],
+            "Variation sale price updated": [
+                "قیمت فروش ویژه متغیر به‌روزرسانی شد"
+            ],
+            "Variation stock updated": [
+                "موجودی متغیر به‌روزرسانی شد"
+            ],
+            "View Change History": [
+                "مشاهده تاریخچه تغییرات"
+            ],
+            "WooCommerce Price & Stock Manager": [
+                "مدیریت قیمت و موجودی ووکامرس"
+            ],
+            "WooCommerce Price Manager": [
+                "مدیریت قیمت ووکامرس"
+            ],
+            "WooCommerce Price Manager requires PHP 8.0 or higher.": [
+                "مدیریت قیمت ووکامرس نیازمند نسخه PHP 8.0 یا بالاتر است."
+            ],
+            "WooCommerce Price Manager requires WooCommerce to be installed and active.": [
+                "مدیریت قیمت ووکامرس نیازمند نصب و فعال بودن ووکامرس است."
+            ],
+            "← Previous": [
+                "← قبلی"
+            ],
+            "▲ Hide Variations": [
+                "▲ بستن متغیرها"
+            ],
+            "▼ Show Variations": [
+                "▼ نمایش متغیرها"
+            ]
+        }
+    }
+}
