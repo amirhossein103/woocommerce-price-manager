@@ -207,8 +207,21 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
                 $cleanKey = str_starts_with($key, 'attribute_') ? substr($key, 10) : $key;
                 $defaultAttributesToSave[$cleanKey] = $value;
             }
+            
+            // 1. Force update post meta directly to bypass any WooCommerce change-detection bugs
+            update_post_meta($parentId, '_default_attributes', $defaultAttributesToSave);
+            
+            // 2. Also update the WC_Product object to ensure hooks/cache clear routines fire
             $parent->set_default_attributes($defaultAttributesToSave);
             $parent->save();
+            
+            // 3. Aggressively clear all possible caches for this product
+            if (function_exists('wc_delete_product_transients')) {
+                wc_delete_product_transients($parentId);
+            }
+            if (function_exists('clean_post_cache')) {
+                clean_post_cache($parentId);
+            }
         }
     }
 
