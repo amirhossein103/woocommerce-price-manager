@@ -199,22 +199,28 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
             throw new DomainException("Variation does not belong to the specified parent product.");
         }
 
-        $variationAttributes = method_exists($variation, 'get_attributes') ? $variation->get_attributes() : [];
-        if (!empty($variationAttributes)) {
-            // 1. Force update post meta directly to bypass any WooCommerce change-detection bugs
-            update_post_meta($parentId, '_default_attributes', $variationAttributes);
-            
-            // 2. Also update the WC_Product object to ensure hooks/cache clear routines fire
-            $parent->set_default_attributes($variationAttributes);
-            $parent->save();
-            
-            // 3. Aggressively clear all possible caches for this product
-            if (function_exists('wc_delete_product_transients')) {
-                wc_delete_product_transients($parentId);
+        $variationAttributes = method_exists($variation, 'get_attributes') ? (array)$variation->get_attributes() : [];
+        $cleanDefaults = [];
+        foreach ($variationAttributes as $key => $value) {
+            $cleanKey = str_starts_with($key, 'attribute_') ? substr($key, 10) : $key;
+            if ($value !== null && $value !== '') {
+                $cleanDefaults[$cleanKey] = $value;
             }
-            if (function_exists('clean_post_cache')) {
-                clean_post_cache($parentId);
-            }
+        }
+        
+        // 1. Force update post meta directly to bypass any WooCommerce change-detection bugs
+        update_post_meta($parentId, '_default_attributes', $cleanDefaults);
+        
+        // 2. Also update the WC_Product object to ensure hooks/cache clear routines fire
+        $parent->set_default_attributes($cleanDefaults);
+        $parent->save();
+        
+        // 3. Aggressively clear all possible caches for this product
+        if (function_exists('wc_delete_product_transients')) {
+            wc_delete_product_transients($parentId);
+        }
+        if (function_exists('clean_post_cache')) {
+            clean_post_cache($parentId);
         }
     }
 
@@ -394,36 +400,49 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         $attrs = [];
         
         $isDefault = false;
-        if (!empty($parentDefaultAttributes) && !empty($rawAttrs)) {
-            $matches = true;
+        if (!empty($parentDefaultAttributes)) {
+            // Normalize parent default attributes
+            $normParentDefaults = [];
+            foreach ($parentDefaultAttributes as $pdKey => $pdVal) {
+                if ($pdVal !== '') {
+                    $pdCleanKey = str_starts_with((string)$pdKey, 'attribute_') ? substr((string)$pdKey, 10) : (string)$pdKey;
+                    $normParentDefaults[urldecode($pdCleanKey)] = urldecode((string)$pdVal);
+                }
+            }
+            
+            // Normalize variation attributes
+            $normVariationAttrs = [];
             foreach ($rawAttrs as $rawKey => $rawValue) {
-                $cleanKey = str_starts_with($rawKey, 'attribute_') ? substr($rawKey, 10) : $rawKey;
+                if ($rawValue !== '') {
+                    $cleanKey = str_starts_with((string)$rawKey, 'attribute_') ? substr((string)$rawKey, 10) : (string)$rawKey;
+                    $normVariationAttrs[urldecode($cleanKey)] = urldecode((string)$rawValue);
+                }
+            }
+
+            if (!empty($normParentDefaults)) {
+                $matches = true;
                 
-                // Find matching key in parent defaults with robust decoding
-                $defValue = null;
-                $found = false;
-                foreach ($parentDefaultAttributes as $pdKey => $pdVal) {
-                    $pdCleanKey = str_starts_with($pdKey, 'attribute_') ? substr($pdKey, 10) : $pdKey;
-                    if ($pdCleanKey === $cleanKey || urldecode($pdCleanKey) === urldecode($cleanKey) || urldecode(urldecode($pdCleanKey)) === urldecode(urldecode($cleanKey))) {
-                        $defValue = $pdVal;
-                        $found = true;
+                // 1. Every attribute in parent defaults must be met by the variation
+                foreach ($normParentDefaults as $defKey => $defVal) {
+                    if (!isset($normVariationAttrs[$defKey]) || $normVariationAttrs[$defKey] !== $defVal) {
+                        $matches = false;
                         break;
                     }
                 }
                 
-                // If the variation has a specific value set (not 'any')
-                if ($rawValue !== '') {
-                    if ($found) {
-                        // Compare the values robustly
-                        if ($rawValue !== $defValue && urldecode($rawValue) !== urldecode($defValue) && urldecode(urldecode((string)$rawValue)) !== urldecode(urldecode((string)$defValue))) {
+                // 2. Every specific attribute on the variation must be met by the parent defaults
+                if ($matches) {
+                    foreach ($normVariationAttrs as $varKey => $varVal) {
+                        if (!isset($normParentDefaults[$varKey]) || $normParentDefaults[$varKey] !== $varVal) {
                             $matches = false;
                             break;
                         }
                     }
                 }
-            }
-            if ($matches) {
-                $isDefault = true;
+                
+                if ($matches) {
+                    $isDefault = true;
+                }
             }
         }
 
