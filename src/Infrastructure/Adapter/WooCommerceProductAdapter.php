@@ -106,6 +106,9 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
             return [];
         }
 
+        $parent = function_exists('wc_get_product') ? wc_get_product($productId) : null;
+        $parentDefaultAttributes = $parent && method_exists($parent, 'get_default_attributes') ? $parent->get_default_attributes() : [];
+
         $args = [
             'type' => 'variation',
             'parent' => $productId,
@@ -121,7 +124,7 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         $variations = [];
         foreach ($results as $wcVariation) {
             if (is_object($wcVariation) && method_exists($wcVariation, 'get_id')) {
-                $variations[] = $this->mapWcVariationToEntity($wcVariation);
+                $variations[] = $this->mapWcVariationToEntity($wcVariation, $parentDefaultAttributes);
             }
         }
 
@@ -373,18 +376,22 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
     private function mapWcVariationToEntity(object $wcVariation, array $parentDefaultAttributes = []): Variation
     {
         $id = (int) $wcVariation->get_id();
-        $parentId = method_exists($wcVariation, 'get_parent_id') ? (int) $wcVariation->get_parent_id() : 0;
+        $parentId = (int) $wcVariation->get_parent_id();
         
         $rawAttrs = method_exists($wcVariation, 'get_attributes') ? (array) $wcVariation->get_attributes() : [];
         $attrs = [];
         
         $isDefault = false;
-        if (!empty($parentDefaultAttributes) && !empty($rawAttrs) && count($parentDefaultAttributes) === count($rawAttrs)) {
-            // Check if all parent defaults match the variation's attributes
+        if (!empty($parentDefaultAttributes) && !empty($rawAttrs)) {
+            // A variation is default if it has all the same attributes as the parent defaults
+            // and the parent defaults define ALL the variation's attributes (unless 'any' is used)
             $matches = true;
-            foreach ($parentDefaultAttributes as $defKey => $defValue) {
-                $taxKey = str_starts_with($defKey, 'attribute_') ? $defKey : 'attribute_' . $defKey;
-                if (!isset($rawAttrs[$taxKey]) || $rawAttrs[$taxKey] !== $defValue) {
+            foreach ($rawAttrs as $rawKey => $rawValue) {
+                $cleanKey = str_starts_with($rawKey, 'attribute_') ? substr($rawKey, 10) : $rawKey;
+                $defValue = $parentDefaultAttributes[$cleanKey] ?? ($parentDefaultAttributes['attribute_' . $cleanKey] ?? null);
+                
+                // If the default doesn't match the variation's value (and the variation value isn't empty/any)
+                if ($rawValue !== '' && $defValue !== $rawValue) {
                     $matches = false;
                     break;
                 }
@@ -393,7 +400,7 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
                 $isDefault = true;
             }
         }
-        
+
         foreach ($rawAttrs as $key => $value) {
             $taxKey = str_starts_with($key, 'attribute_') ? substr($key, 10) : $key;
             $decodedValue = urldecode(urldecode((string)$value));
