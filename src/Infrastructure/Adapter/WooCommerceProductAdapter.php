@@ -316,7 +316,44 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
     {
         $id = (int) $wcVariation->get_id();
         $parentId = method_exists($wcVariation, 'get_parent_id') ? (int) $wcVariation->get_parent_id() : 0;
-        $attrs = method_exists($wcVariation, 'get_attributes') ? (array) $wcVariation->get_attributes() : [];
+        
+        $rawAttrs = method_exists($wcVariation, 'get_attributes') ? (array) $wcVariation->get_attributes() : [];
+        $attrs = [];
+        foreach ($rawAttrs as $key => $value) {
+            $taxKey = str_starts_with($key, 'attribute_') ? substr($key, 10) : $key;
+            $decodedValue = urldecode(urldecode((string)$value));
+            
+            $label = $taxKey;
+            $valueName = $decodedValue;
+            
+            if (function_exists('wc_attribute_label')) {
+                $lbl = wc_attribute_label($taxKey);
+                if ($lbl && $lbl !== $taxKey) {
+                    $label = $lbl;
+                }
+            }
+            
+            if ($label === $taxKey && str_starts_with($taxKey, 'pa_') && function_exists('get_taxonomy')) {
+                $tax = get_taxonomy($taxKey);
+                if ($tax && isset($tax->labels->singular_name)) {
+                    $label = $tax->labels->singular_name;
+                }
+            }
+
+            if (str_starts_with($taxKey, 'pa_') && function_exists('get_term_by')) {
+                $term = get_term_by('slug', $decodedValue, $taxKey);
+                
+                if (!$term || is_wp_error($term)) {
+                    $term = get_term_by('slug', $value, $taxKey);
+                }
+                
+                if ($term instanceof \WP_Term && !is_wp_error($term)) {
+                    $valueName = $term->name;
+                }
+            }
+            
+            $attrs[$label] = $valueName;
+        }
 
         $reg = method_exists($wcVariation, 'get_regular_price') ? $wcVariation->get_regular_price('edit') : '';
         $sale = method_exists($wcVariation, 'get_sale_price') ? $wcVariation->get_sale_price('edit') : '';
