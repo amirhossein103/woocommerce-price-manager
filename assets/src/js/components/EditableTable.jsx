@@ -98,7 +98,6 @@ const VariationRow = memo( function VariationRow( { variation, parentId, parentM
                     <Button
                         isSmall
                         variant="tertiary"
-                        className={`wpm-schedule-btn ${(variation.price?.date_on_sale_from || variation.price?.date_on_sale_to) ? 'is-scheduled' : ''}`}
                         onClick={ () => onOpenSchedule?.( { ...variation, name: `Variation #${variation.id}` } ) }
                         title={ (variation.price?.date_on_sale_from || variation.price?.date_on_sale_to) ? sprintf( __( 'Scheduled: %s to %s', 'woo-price-manager' ), variation.price?.date_on_sale_from || 'Now', variation.price?.date_on_sale_to || 'Forever' ) : __( 'Schedule Sale Dates', 'woo-price-manager' ) }
                         aria-label={ __( 'Schedule Sale Dates', 'woo-price-manager' ) }
@@ -112,7 +111,6 @@ const VariationRow = memo( function VariationRow( { variation, parentId, parentM
                 <Button
                     isSmall
                     variant="tertiary"
-                    className={`wpm-set-default-btn ${ variation.is_default ? 'is-default' : '' }`}
                     onClick={ () => {
                         if ( !variation.is_default && parentId ) {
                             setDefaultVariation( parentId, variation.id ).then( ( res ) => {
@@ -315,7 +313,6 @@ const ProductRow = memo( function ProductRow( { product, isSelected, selectedIds
                             <Button
                                 isSmall
                                 variant="tertiary"
-                                className={`wpm-schedule-btn ${(product.price?.date_on_sale_from || product.price?.date_on_sale_to) ? 'is-scheduled' : ''}`}
                                 onClick={ () => onOpenSchedule?.( product ) }
                                 title={ (product.price?.date_on_sale_from || product.price?.date_on_sale_to) ? sprintf( __( 'Scheduled: %s to %s', 'woo-price-manager' ), product.price?.date_on_sale_from || 'Now', product.price?.date_on_sale_to || 'Forever' ) : __( 'Schedule Sale Dates', 'woo-price-manager' ) }
                                 aria-label={ __( 'Schedule Sale Dates', 'woo-price-manager' ) }
