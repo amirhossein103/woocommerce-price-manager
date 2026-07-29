@@ -233,6 +233,7 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         $products = wc_get_products([
             'include' => $productIds,
             'limit' => count($productIds),
+            'type' => ['simple', 'variable', 'variation', 'external', 'grouped'],
             'return' => 'objects',
         ]);
 
@@ -270,6 +271,7 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         $products = wc_get_products([
             'include' => $productIds,
             'limit' => count($productIds),
+            'type' => ['simple', 'variable', 'variation', 'external', 'grouped'],
             'return' => 'objects',
         ]);
 
