@@ -276,6 +276,38 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         return $snapshots;
     }
 
+    public function resolveToOperableIds(array $productIds, bool $forStock = false): array
+    {
+        if (empty($productIds) || !function_exists('wc_get_product')) {
+            return [];
+        }
+
+        $resolved = [];
+        foreach ($productIds as $id) {
+            $product = wc_get_product($id);
+            if (!$product) {
+                continue;
+            }
+
+            if ($product->is_type('variable')) {
+                if ($forStock && $product->get_manage_stock()) {
+                    $resolved[] = $id;
+                } else {
+                    $children = $product->get_children();
+                    if (is_array($children)) {
+                        foreach ($children as $childId) {
+                            $resolved[] = $childId;
+                        }
+                    }
+                }
+            } else {
+                $resolved[] = $id;
+            }
+        }
+
+        return array_unique($resolved);
+    }
+
     private function mapWcProductToEntity(object $wcProduct): Product
     {
         $id = (int) $wcProduct->get_id();
