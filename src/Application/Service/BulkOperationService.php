@@ -35,7 +35,8 @@ final class BulkOperationService
             throw new DomainException("Invalid operation type: {$operation->operationType}");
         }
 
-        $ids = $operation->productIds;
+        $resolvedIds = $this->productRepo->resolveToOperableIds($operation->productIds, $operation->isStockOperation());
+        $ids = $resolvedIds;
         $previewData = [];
         $validCount = 0;
         $invalidCount = 0;
@@ -105,7 +106,8 @@ final class BulkOperationService
             throw new DomainException("Invalid operation type: {$operation->operationType}");
         }
 
-        $targetIds = array_diff($operation->productIds, $excludedIds);
+        $resolvedIds = $this->productRepo->resolveToOperableIds($operation->productIds, $operation->isStockOperation());
+        $targetIds = array_diff($resolvedIds, $excludedIds);
         $bulkOperationId = (int) (microtime(true) * 1000);
 
         $succeeded = 0;

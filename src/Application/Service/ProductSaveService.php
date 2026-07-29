@@ -161,4 +161,32 @@ final class ProductSaveService
         $updated = $this->productRepo->findById($productId);
         return $updated ? $updated->toArray() : $current->toArray();
     }
+
+    /**
+     * Sets a specific variation as the default for its parent product.
+     */
+    public function setDefaultVariation(int $parentId, int $variationId, int $userId): void
+    {
+        // Simple verification that parent exists
+        $current = $this->productRepo->findById($parentId);
+        if ($current === null) {
+            throw new DomainException("Product with ID {$parentId} not found.");
+        }
+
+        if ($current->type !== 'variable') {
+            throw new DomainException("Only variable products can have default variations.");
+        }
+
+        $this->productRepo->setDefaultVariation($parentId, $variationId);
+
+        // Record the action in the change log
+        $this->changeLog->record(
+            $parentId,
+            $userId,
+            'default_variation',
+            '',
+            (string) $variationId,
+            'manual_edit'
+        );
+    }
 }

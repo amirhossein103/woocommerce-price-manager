@@ -386,3 +386,92 @@ msgstr "تعیین قیمت (%s)"
 #: assets/src/js/components/BulkToolbar.jsx:41
 msgid "Set Price (Fixed)"
 msgstr "تعیین قیمت (ثابت)"
+
+#: assets/src/js/components/BulkToolbar.jsx
+msgid "Increase Price (%s)"
+msgstr "افزایش قیمت (%s)"
+
+#: assets/src/js/components/BulkToolbar.jsx
+msgid "Increase Price (Fixed)"
+msgstr "افزایش قیمت (مبلغ ثابت)"
+
+#: assets/src/js/components/BulkToolbar.jsx
+msgid "Decrease Price (%s)"
+msgstr "کاهش قیمت (%s)"
+
+#: assets/src/js/components/BulkToolbar.jsx
+msgid "Decrease Price (Fixed)"
+msgstr "کاهش قیمت (مبلغ ثابت)"
+
+#: assets/src/js/components/BulkToolbar.jsx
+msgid "Set Price (%s)"
+msgstr "تعیین قیمت (%s)"
+
+#: assets/src/js/components/BulkToolbar.jsx
+msgid "Set Price (Fixed)"
+msgstr "تعیین قیمت (مبلغ ثابت)"
+
+#: assets/src/js/components/BulkToolbar.jsx
+msgid "Increase Stock Quantity"
+msgstr "افزایش تعداد موجودی"
+
+#: assets/src/js/components/BulkToolbar.jsx
+msgid "Clear Stock Management"
+msgstr "حذف مدیریت موجودی"
+
+#: assets/src/js/components/EditableTable.jsx
+msgid "Schedule Sale Dates"
+msgstr "زمان‌بندی تاریخ حراج"
+
+#: assets/src/js/components/EditableTable.jsx
+msgid "variable"
+msgstr "متغیر"
+
+#: assets/src/js/components/EditableTable.jsx
+msgid "simple"
+msgstr "ساده"
+
+
+#: assets/src/js/components/EditableTable.jsx
+msgid "Selecting this product will apply bulk edits to all its variations."
+msgstr "انتخاب این محصول، تغییرات دسته‌جمعی را روی تمام متغیرهای آن اعمال می‌کند."
+
+
+ m s g i d   \  
+ C u r r e n t  
+ d e f a u l t  
+ v a r i a t i o n \ 
+ m s g s t r   \ *FH9 
+ ~�4 A16 
+ A9D�\ 
+ 
+ m s g i d   \ S e t  
+ a s  
+ d e f a u l t  
+ v a r i a t i o n \ 
+ m s g s t r   \ *F8�E 
+ (G 
+ 9FH'F 
+ *FH9 
+ ~�4 A16\ 
+ 
+ m s g i d   \ D e f a u l t  
+ v a r i a t i o n  
+ u p d a t e d \ 
+ m s g s t r   \ *FH9 
+ ~�4 A16 
+ (1H213'F� 
+ 4/\ 
+ 
+ m s g i d   \ F a i l e d  
+ t o  
+ u p d a t e  
+ d e f a u l t  
+ v a r i a t i o n \ 
+ m s g s t r   \ .7' 
+ /1 
+ (1H213'F� 
+ *FH9 
+ ~�4 A16\ 
+  
+ 

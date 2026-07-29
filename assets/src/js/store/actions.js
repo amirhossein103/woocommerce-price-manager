@@ -13,6 +13,9 @@ export const actions = {
     selectAll( ids ) {
         return { type: 'SELECT_ALL', ids };
     },
+    setSelection( ids ) {
+        return { type: 'SET_SELECTION', ids };
+    },
     clearSelection() {
         return { type: 'CLEAR_SELECTION' };
     },
@@ -76,6 +79,21 @@ export const actions = {
                 return { success: true, data: response.data || response };
             } catch ( error ) {
                 dispatch( { type: 'ROLLBACK_ERROR', productId, error } );
+                return { success: false, error };
+            }
+        };
+    },
+    setDefaultVariation( parentId, variationId ) {
+        return async ( { dispatch } ) => {
+            dispatch( { type: 'SET_DEFAULT_VARIATION_START', parentId, variationId } );
+            try {
+                const response = await api.setDefaultVariation( parentId, variationId );
+                dispatch( { type: 'SET_DEFAULT_VARIATION_SUCCESS', parentId, variationId, result: response } );
+                // Refetch variations to update the isDefault flags
+                dispatch( actions.fetchVariations( parentId ) );
+                return { success: true };
+            } catch ( error ) {
+                dispatch( { type: 'SET_DEFAULT_VARIATION_ERROR', parentId, variationId, error } );
                 return { success: false, error };
             }
         };

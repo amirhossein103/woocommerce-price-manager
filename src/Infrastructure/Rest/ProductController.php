@@ -70,6 +70,24 @@ final class ProductController extends \WP_REST_Controller
             ],
         ]);
 
+        register_rest_route($this->namespace, '/products/(?P<id>\d+)/default-variation', [
+            [
+                'methods' => 'PUT',
+                'callback' => [$this, 'setDefaultVariation'],
+                'permission_callback' => [$this, 'checkPermission'],
+                'args' => [
+                    'id' => [
+                        'required' => true,
+                        'sanitize_callback' => 'absint',
+                    ],
+                    'variation_id' => [
+                        'required' => true,
+                        'sanitize_callback' => 'absint',
+                    ],
+                ],
+            ],
+        ]);
+
         register_rest_route($this->namespace, '/categories', [
             [
                 'methods' => 'GET',
@@ -180,6 +198,20 @@ final class ProductController extends \WP_REST_Controller
 
         $variations = $this->listingService->getVariations($id);
         return rest_ensure_response(['data' => $variations]);
+    }
+
+    public function setDefaultVariation(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
+    {
+        $id = (int) $request->get_param('id');
+        $variationId = (int) $request->get_param('variation_id');
+        $userId = get_current_user_id();
+
+        try {
+            $this->saveService->setDefaultVariation($id, $variationId, $userId);
+            return rest_ensure_response(['success' => true]);
+        } catch (DomainException $e) {
+            return new \WP_Error('business_rule_violation', $e->getMessage(), ['status' => 422]);
+        }
     }
 
     public function listCategories(\WP_REST_Request $request): \WP_REST_Response

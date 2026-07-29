@@ -312,13 +312,30 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         );
     }
 
-    private function mapWcVariationToEntity(object $wcVariation): Variation
+    private function mapWcVariationToEntity(object $wcVariation, array $parentDefaultAttributes = []): Variation
     {
         $id = (int) $wcVariation->get_id();
         $parentId = method_exists($wcVariation, 'get_parent_id') ? (int) $wcVariation->get_parent_id() : 0;
         
         $rawAttrs = method_exists($wcVariation, 'get_attributes') ? (array) $wcVariation->get_attributes() : [];
         $attrs = [];
+        
+        $isDefault = false;
+        if (!empty($parentDefaultAttributes) && !empty($rawAttrs)) {
+            // Check if all parent defaults match the variation's attributes
+            $matches = true;
+            foreach ($parentDefaultAttributes as $defKey => $defValue) {
+                $taxKey = str_starts_with($defKey, 'attribute_') ? $defKey : 'attribute_' . $defKey;
+                if (!isset($rawAttrs[$taxKey]) || $rawAttrs[$taxKey] !== $defValue) {
+                    $matches = false;
+                    break;
+                }
+            }
+            if ($matches) {
+                $isDefault = true;
+            }
+        }
+        
         foreach ($rawAttrs as $key => $value) {
             $taxKey = str_starts_with($key, 'attribute_') ? substr($key, 10) : $key;
             $decodedValue = urldecode(urldecode((string)$value));
@@ -381,7 +398,7 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
             $id,
             $parentId,
             $attrs,
-            false,
+            $isDefault,
             $priceSnapshot,
             $stockSnapshot
         );

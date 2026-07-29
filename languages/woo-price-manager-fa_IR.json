@@ -36,17 +36,20 @@
             "Cancel": [
                 "انصراف"
             ],
-            "Category": [
-                "دسته‌بندی"
-            ],
             "Cannot set sale price without a regular price.": [
                 "امکان تعیین قیمت فروش ویژه بدون قیمت عادی وجود ندارد."
+            ],
+            "Category": [
+                "دسته‌بندی"
             ],
             "Change History: %s": [
                 "تاریخچه تغییرات: %s"
             ],
             "Clear": [
                 "پاک کردن"
+            ],
+            "Clear Stock Management": [
+                "حذف مدیریت موجودی"
             ],
             "Confirm Bulk Operation Preview": [
                 "تایید پیش‌نمایش عملیات گروهی"
@@ -59,6 +62,12 @@
             ],
             "Decrease Price (%)": [
                 "کاهش قیمت (درصدی)"
+            ],
+            "Decrease Price (%s)": [
+                "کاهش قیمت (%s)"
+            ],
+            "Decrease Price (Fixed)": [
+                "کاهش قیمت (مبلغ ثابت)"
             ],
             "Edit %s": [
                 "ویرایش %s"
@@ -101,6 +110,15 @@
             ],
             "Increase Price (%)": [
                 "افزایش قیمت (درصدی)"
+            ],
+            "Increase Price (%s)": [
+                "افزایش قیمت (%s)"
+            ],
+            "Increase Price (Fixed)": [
+                "افزایش قیمت (مبلغ ثابت)"
+            ],
+            "Increase Stock Quantity": [
+                "افزایش تعداد موجودی"
             ],
             "Invalid: %d": [
                 "نامعتبر: %d"
@@ -177,6 +195,9 @@
             "Sale price updated for %s": [
                 "قیمت فروش ویژه برای %s به‌روزرسانی شد"
             ],
+            "Schedule Sale Dates": [
+                "زمان‌بندی تاریخ حراج"
+            ],
             "Search Products": [
                 "جستجوی محصولات"
             ],
@@ -189,11 +210,14 @@
             "Select all products on page": [
                 "انتخاب همه محصولات در این صفحه"
             ],
+            "Selecting this product will apply bulk edits to all its variations.": [
+                "انتخاب این محصول، تغییرات دسته‌جمعی را روی تمام متغیرهای آن اعمال می‌کند."
+            ],
             "Set Price (%s)": [
                 "تعیین قیمت (%s)"
             ],
             "Set Price (Fixed)": [
-                "تعیین قیمت (ثابت)"
+                "تعیین قیمت (مبلغ ثابت)"
             ],
             "Set Stock Quantity": [
                 "تنظیم تعداد موجودی"
@@ -263,6 +287,12 @@
             ],
             "WooCommerce Price Manager requires WooCommerce to be installed and active.": [
                 "مدیریت قیمت ووکامرس نیازمند نصب و فعال بودن ووکامرس است."
+            ],
+            "simple": [
+                "ساده"
+            ],
+            "variable": [
+                "متغیر"
             ],
             "← Previous": [
                 "← قبلی"

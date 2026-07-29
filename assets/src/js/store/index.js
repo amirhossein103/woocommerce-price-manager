@@ -47,6 +47,8 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
             };
         case 'SELECT_ALL':
             return { ...state, selectedIds: [ ...action.ids ] };
+        case 'SET_SELECTION':
+            return { ...state, selectedIds: [ ...action.ids ] };
         case 'CLEAR_SELECTION':
             return { ...state, selectedIds: [] };
         case 'UPDATE_START': {

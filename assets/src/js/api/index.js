@@ -83,6 +83,20 @@ const api = {
             path: `${ NAMESPACE }/products/${ productId }/history/${ changeId }/rollback`,
             method: 'POST',
         } );
+    },
+
+    /**
+     * Set a variation as the default for its parent product.
+     * @param {number} parentId Product ID.
+     * @param {number} variationId Variation ID.
+     * @return {Promise<Object>} Response object.
+     */
+    async setDefaultVariation( parentId, variationId ) {
+        return apiFetch( {
+            path: `${ NAMESPACE }/products/${ parentId }/default-variation`,
+            method: 'PUT',
+            data: { variation_id: variationId },
+        } );
     }
 };
 

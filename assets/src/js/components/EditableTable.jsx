@@ -10,13 +10,19 @@ import SaleScheduleModal from './SaleScheduleModal';
 import { formatPrice } from '../utils/formatters';
 import api from '../api';
 
-function VariationRow( { variation, parentId, parentManageStock, onAnnouncement, onOpenSchedule } ) {
-    const { updateProduct } = useDispatch( 'wpm/products' );
+function VariationRow( { variation, parentId, parentManageStock, isSelected, onToggleSelect, onAnnouncement, onOpenSchedule } ) {
+    const { updateProduct, setDefaultVariation } = useDispatch( 'wpm/products' );
     const isVarManaged = !!( variation.stock?.is_managed ?? variation.stock?.manage_stock );
 
     return (
-        <tr className="wpm-row--variation">
-            <td className="wpm-cell--checkbox"></td>
+        <tr className={`wpm-row--variation ${ variation.is_default ? 'wpm-row--is-default' : '' }`}>
+            <td className="wpm-cell--checkbox">
+                <CheckboxControl
+                    checked={ isSelected }
+                    onChange={ () => onToggleSelect( variation.id ) }
+                    aria-label={ sprintf( __( 'Select variation #%d', 'woo-price-manager' ), variation.id ) }
+                />
+            </td>
             <td className="wpm-cell--image"></td>
             <td className="wpm-cell--name">
                 <span className="wpm-variation-indent">↳</span>
@@ -101,17 +107,45 @@ function VariationRow( { variation, parentId, parentManageStock, onAnnouncement,
                     </Button>
                 </div>
             </td>
-            <td className="wpm-cell--actions"></td>
+            <td className="wpm-cell--actions">
+                <Button
+                    isSmall
+                    variant="tertiary"
+                    className={`wpm-set-default-btn ${ variation.is_default ? 'is-default' : '' }`}
+                    onClick={ () => {
+                        if ( !variation.is_default && parentId ) {
+                            setDefaultVariation( parentId, variation.id ).then( ( res ) => {
+                                if ( res.success ) {
+                                    onAnnouncement?.( __( 'Default variation updated', 'woo-price-manager' ), 'polite' );
+                                } else {
+                                    onAnnouncement?.( __( 'Failed to update default variation', 'woo-price-manager' ), 'assertive' );
+                                }
+                            } );
+                        }
+                    } }
+                    disabled={ variation.is_default }
+                    title={ variation.is_default ? __( 'Current default variation', 'woo-price-manager' ) : __( 'Set as default variation', 'woo-price-manager' ) }
+                    style={{ minWidth: '24px', padding: '4px', fill: variation.is_default ? '#f5cf04' : '#8c8f94' }}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+                        { variation.is_default ? (
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                        ) : (
+                            <path d="M12 4.1l2.35 4.77 5.25.76-3.8 3.7.9 5.23L12 16.1l-4.7 2.47.9-5.23-3.8-3.7 5.25-.76L12 4.1m0-2.1L8.91 8.26 2 9.27l5 4.87-1.18 6.88L12 17.77l6.18 3.25L17 14.14l5-4.87-6.91-1.01L12 2z"></path>
+                        )}
+                    </svg>
+                </Button>
+            </td>
         </tr>
     );
 }
 
-function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnnouncement, onOpenSchedule } ) {
+function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, onOpenHistory, onAnnouncement, onOpenSchedule } ) {
     const [ isExpanded, setIsExpanded ] = useState( false );
     const { variations } = useSelect( ( select ) => ( {
         variations: select( 'wpm/products' ).getVariations( product.id ),
     } ), [ product.id ] );
-    const { fetchVariations, updateProduct } = useDispatch( 'wpm/products' );
+    const { fetchVariations, updateProduct, setSelection } = useDispatch( 'wpm/products' );
 
     const isVariable = product.type === 'variable';
     const isManaged = !!( product.stock?.is_managed ?? product.stock?.manage_stock );
@@ -123,15 +157,58 @@ function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnn
         setIsExpanded( ! isExpanded );
     };
 
+    const handleParentToggle = () => {
+        onToggleSelect( product.id );
+    };
+
+    const handleVariationToggle = ( varId ) => {
+        let newIds = [ ...selectedIds ];
+        const varExists = newIds.includes( varId );
+        
+        if ( isSelected ) {
+            // If parent was checked, and user toggles a variation, uncheck parent and check all OTHER loaded variations explicitly.
+            newIds = newIds.filter( id => id !== product.id ); // Remove parent
+            if ( variations ) {
+                variations.forEach( v => {
+                    if ( v.id !== varId && !newIds.includes( v.id ) ) {
+                        newIds.push( v.id );
+                    }
+                } );
+            }
+        } else {
+            // Standard toggle for variation
+            if ( varExists ) {
+                newIds = newIds.filter( id => id !== varId );
+            } else {
+                newIds.push( varId );
+            }
+        }
+        
+        if ( setSelection ) {
+            setSelection( newIds );
+        }
+    };
+
+
     return (
         <>
             <tr className={ `wpm-row ${ isSelected ? 'wpm-row--selected' : '' }` }>
                 <td className="wpm-cell--checkbox">
-                    <CheckboxControl
-                        checked={ isSelected }
-                        onChange={ () => onToggleSelect( product.id ) }
-                        aria-label={ sprintf( __( 'Select %s', 'woo-price-manager' ), product.name ) }
-                    />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <CheckboxControl
+                            checked={ isSelected }
+                            onChange={ handleParentToggle }
+                            aria-label={ sprintf( __( 'Select %s', 'woo-price-manager' ), product.name ) }
+                        />
+                        { isVariable && (
+                            <span 
+                                title={ __( 'Selecting this product will apply bulk edits to all its variations.', 'woo-price-manager' ) } 
+                                style={{ cursor: 'help', color: '#8c8f94', fontSize: '12px', marginTop: '2px' }}
+                            >
+                                ℹ️
+                            </span>
+                        ) }
+                    </div>
                 </td>
                 <td className="wpm-cell--image">
                     { product.image_url ? (
@@ -157,7 +234,9 @@ function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnn
                 </td>
                 <td className="wpm-cell--sku">{ product.sku || '-' }</td>
                 <td className="wpm-cell--type">
-                    <span className="wpm-badge">{ product.type }</span>
+                    <span className="wpm-badge">
+                        { product.type === 'variable' ? __( 'variable', 'woo-price-manager' ) : product.type === 'simple' ? __( 'simple', 'woo-price-manager' ) : product.type }
+                    </span>
                 </td>
                 <td className="wpm-cell--manage-stock">
                     <CheckboxControl
@@ -256,7 +335,16 @@ function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnn
                 </td>
             </tr>
             { isExpanded && isVariable && variations && variations.map( ( varItem ) => (
-                <VariationRow key={ varItem.id } variation={ varItem } parentId={ product.id } parentManageStock={ !!product.stock?.manage_stock } onAnnouncement={ onAnnouncement } onOpenSchedule={ onOpenSchedule } />
+                <VariationRow 
+                    key={ varItem.id } 
+                    variation={ varItem } 
+                    parentId={ product.id } 
+                    parentManageStock={ !!product.stock?.manage_stock } 
+                    isSelected={ selectedIds.includes( varItem.id ) }
+                    onToggleSelect={ handleVariationToggle }
+                    onAnnouncement={ onAnnouncement } 
+                    onOpenSchedule={ onOpenSchedule } 
+                />
             ) ) }
         </>
     );
@@ -305,7 +393,7 @@ export default function EditableTable() {
         isLoading: select( 'wpm/products' ).isLoading(),
     } ) );
 
-    const { fetchProducts, setFilters, setPage, toggleSelection, selectAll, clearSelection } = useDispatch( 'wpm/products' );
+    const { fetchProducts, setFilters, setPage, toggleSelection, selectAll, clearSelection, setSelection } = useDispatch( 'wpm/products' );
     const [ categories, setCategories ] = useState( window.wpmData?.categories || [] );
     const [ historyProduct, setHistoryProduct ] = useState( null );
     const [ scheduleItem, setScheduleItem ] = useState( null );
@@ -446,6 +534,7 @@ export default function EditableTable() {
                                         key={ p.id }
                                         product={ p }
                                         isSelected={ selectedIds.includes( p.id ) }
+                                        selectedIds={ selectedIds }
                                         onToggleSelect={ toggleSelection }
                                         onOpenHistory={ ( prod ) => setHistoryProduct( prod ) }
                                         onAnnouncement={ handleAnnouncement }
