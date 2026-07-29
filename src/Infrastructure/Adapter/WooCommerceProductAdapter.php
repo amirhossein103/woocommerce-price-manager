@@ -201,7 +201,13 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
 
         $variationAttributes = method_exists($variation, 'get_attributes') ? $variation->get_attributes() : [];
         if (!empty($variationAttributes)) {
-            $parent->set_default_attributes($variationAttributes);
+            $defaultAttributesToSave = [];
+            foreach ($variationAttributes as $key => $value) {
+                // WooCommerce expects default attribute keys without the 'attribute_' prefix
+                $cleanKey = str_starts_with($key, 'attribute_') ? substr($key, 10) : $key;
+                $defaultAttributesToSave[$cleanKey] = $value;
+            }
+            $parent->set_default_attributes($defaultAttributesToSave);
             $parent->save();
         }
     }
