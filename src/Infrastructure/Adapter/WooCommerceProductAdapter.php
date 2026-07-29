@@ -389,17 +389,31 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         
         $isDefault = false;
         if (!empty($parentDefaultAttributes) && !empty($rawAttrs)) {
-            // A variation is default if it has all the same attributes as the parent defaults
-            // and the parent defaults define ALL the variation's attributes (unless 'any' is used)
             $matches = true;
             foreach ($rawAttrs as $rawKey => $rawValue) {
                 $cleanKey = str_starts_with($rawKey, 'attribute_') ? substr($rawKey, 10) : $rawKey;
-                $defValue = $parentDefaultAttributes[$cleanKey] ?? ($parentDefaultAttributes['attribute_' . $cleanKey] ?? null);
                 
-                // If the default doesn't match the variation's value (and the variation value isn't empty/any)
-                if ($rawValue !== '' && $defValue !== $rawValue) {
-                    $matches = false;
-                    break;
+                // Find matching key in parent defaults with robust decoding
+                $defValue = null;
+                $found = false;
+                foreach ($parentDefaultAttributes as $pdKey => $pdVal) {
+                    $pdCleanKey = str_starts_with($pdKey, 'attribute_') ? substr($pdKey, 10) : $pdKey;
+                    if ($pdCleanKey === $cleanKey || urldecode($pdCleanKey) === urldecode($cleanKey) || urldecode(urldecode($pdCleanKey)) === urldecode(urldecode($cleanKey))) {
+                        $defValue = $pdVal;
+                        $found = true;
+                        break;
+                    }
+                }
+                
+                // If the variation has a specific value set (not 'any')
+                if ($rawValue !== '') {
+                    if ($found) {
+                        // Compare the values robustly
+                        if ($rawValue !== $defValue && urldecode($rawValue) !== urldecode($defValue) && urldecode(urldecode((string)$rawValue)) !== urldecode(urldecode((string)$defValue))) {
+                            $matches = false;
+                            break;
+                        }
+                    }
                 }
             }
             if ($matches) {
