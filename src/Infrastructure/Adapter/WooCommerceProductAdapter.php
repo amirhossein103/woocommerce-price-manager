@@ -7,6 +7,7 @@ use WPM\Domain\Entity\Product;
 use WPM\Domain\Entity\Variation;
 use WPM\Domain\ValueObject\PriceSnapshot;
 use WPM\Domain\ValueObject\StockSnapshot;
+use WPM\Domain\Exception\DomainException;
 
 defined('ABSPATH') || exit;
 
@@ -175,6 +176,31 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         }
 
         $wcProduct->save();
+    }
+
+    public function setDefaultVariation(int $parentId, int $variationId): void
+    {
+        if (!function_exists('wc_get_product')) {
+            return;
+        }
+
+        $parent = wc_get_product($parentId);
+        $variation = wc_get_product($variationId);
+
+        if (!$parent || !$parent->is_type('variable') || !$variation || !$variation->is_type('variation')) {
+            throw new DomainException("Invalid parent or variation product ID.");
+        }
+
+        // Make sure the variation actually belongs to this parent
+        if ($variation->get_parent_id() !== $parentId) {
+            throw new DomainException("Variation does not belong to the specified parent product.");
+        }
+
+        $variationAttributes = method_exists($variation, 'get_attributes') ? $variation->get_attributes() : [];
+        if (!empty($variationAttributes)) {
+            $parent->set_default_attributes($variationAttributes);
+            $parent->save();
+        }
     }
 
     public function getPriceSnapshots(array $productIds): array
