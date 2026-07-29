@@ -96,7 +96,15 @@ export default function PreviewModal( { isOpen, onClose, onConfirm, previewData,
                             </Button>
                             <Button
                                 isPrimary
-                                onClick={ onConfirm }
+                                onClick={ () => {
+                                    const hasZeroPrice = data.some( ( item ) => ! item.operation_applied?.startsWith( 'stock_' ) && parseFloat( item.calculated_price ) === 0 );
+                                    if ( hasZeroPrice ) {
+                                        if ( ! window.confirm( __( 'Warning: You are attempting to set the price to 0 (free). Do you wish to proceed?', 'woo-price-manager' ) ) ) {
+                                            return;
+                                        }
+                                    }
+                                    onConfirm();
+                                } }
                                 disabled={ valid === 0 }
                             >
                                 { sprintf( __( 'Apply to %d Products', 'woo-price-manager' ), valid ) }

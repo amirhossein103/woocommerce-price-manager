@@ -12,6 +12,9 @@
             "%d items selected": [
                 "%d مورد انتخاب شد"
             ],
+            "All Categories": [
+                "همه دسته‌بندی‌ها"
+            ],
             "All Stock Statuses": [
                 "همه وضعیت‌های موجودی"
             ],
@@ -32,6 +35,9 @@
             ],
             "Cancel": [
                 "انصراف"
+            ],
+            "Category": [
+                "دسته‌بندی"
             ],
             "Cannot set sale price without a regular price.": [
                 "امکان تعیین قیمت فروش ویژه بدون قیمت عادی وجود ندارد."
@@ -183,6 +189,12 @@
             "Select all products on page": [
                 "انتخاب همه محصولات در این صفحه"
             ],
+            "Set Price (%s)": [
+                "تعیین قیمت (%s)"
+            ],
+            "Set Price (Fixed)": [
+                "تعیین قیمت (ثابت)"
+            ],
             "Set Stock Quantity": [
                 "تنظیم تعداد موجودی"
             ],
@@ -236,6 +248,9 @@
             ],
             "View Change History": [
                 "مشاهده تاریخچه تغییرات"
+            ],
+            "Warning: You are attempting to set the price to 0 (free). Do you wish to proceed?": [
+                "هشدار: شما در حال تنظیم قیمت روی ۰ (رایگان) هستید. آیا تمایل به ادامه دارید؟"
             ],
             "WooCommerce Price & Stock Manager": [
                 "مدیریت قیمت و موجودی ووکامرس"

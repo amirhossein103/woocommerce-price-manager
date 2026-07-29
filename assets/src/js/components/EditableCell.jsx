@@ -55,6 +55,12 @@ export default function EditableCell( { id, field, value, type = 'price', regula
             return;
         }
 
+        if ( type === 'price' && parsed === 0 ) {
+            if ( ! window.confirm( __( 'Warning: You are attempting to set the price to 0 (free). Do you wish to proceed?', 'woo-price-manager' ) ) ) {
+                return;
+            }
+        }
+
         setIsEditing( false );
         setIsSaving( true );
         const result = await updateProduct( id, { [ field ]: parsed } );

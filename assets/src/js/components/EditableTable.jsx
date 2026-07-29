@@ -8,6 +8,7 @@ import BulkToolbar from './BulkToolbar';
 import LiveRegion from './LiveRegion';
 import SaleScheduleModal from './SaleScheduleModal';
 import { formatPrice } from '../utils/formatters';
+import api from '../api';
 
 function VariationRow( { variation, parentId, parentManageStock, onAnnouncement, onOpenSchedule } ) {
     const { updateProduct } = useDispatch( 'wpm/products' );
@@ -261,6 +262,40 @@ function ProductRow( { product, isSelected, onToggleSelect, onOpenHistory, onAnn
     );
 }
 
+const buildCategoryOptions = ( cats = [] ) => {
+    const options = [ { label: __( 'All Categories', 'woo-price-manager' ), value: '' } ];
+    if ( ! Array.isArray( cats ) || ! cats.length ) {
+        return options;
+    }
+    const byId = {};
+    const roots = [];
+    const children = {};
+
+    cats.forEach( ( c ) => {
+        byId[ c.id ] = c;
+        if ( ! c.parent_id || ( ! byId[ c.parent_id ] && ! cats.some( p => p.id === c.parent_id ) ) ) {
+            roots.push( c );
+        } else {
+            if ( ! children[ c.parent_id ] ) children[ c.parent_id ] = [];
+            children[ c.parent_id ].push( c );
+        }
+    } );
+
+    const addCat = ( cat, depth = 0 ) => {
+        const prefix = depth > 0 ? '— '.repeat( depth ) : '';
+        options.push( {
+            label: `${ prefix }${ cat.name } (${ cat.count })`,
+            value: String( cat.id ),
+        } );
+        if ( children[ cat.id ] ) {
+            children[ cat.id ].forEach( ( child ) => addCat( child, depth + 1 ) );
+        }
+    };
+
+    roots.forEach( ( root ) => addCat( root, 0 ) );
+    return options;
+};
+
 export default function EditableTable() {
     const { products, meta, filters, selectedIds, isLoading } = useSelect( ( select ) => ( {
         products: select( 'wpm/products' ).getProducts(),
@@ -271,10 +306,21 @@ export default function EditableTable() {
     } ) );
 
     const { fetchProducts, setFilters, setPage, toggleSelection, selectAll, clearSelection } = useDispatch( 'wpm/products' );
+    const [ categories, setCategories ] = useState( window.wpmData?.categories || [] );
     const [ historyProduct, setHistoryProduct ] = useState( null );
     const [ scheduleItem, setScheduleItem ] = useState( null );
     const [ announcement, setAnnouncement ] = useState( '' );
     const [ announceType, setAnnounceType ] = useState( 'polite' );
+
+    useEffect( () => {
+        if ( ! categories.length ) {
+            api.getCategories().then( ( res ) => {
+                if ( res && res.data ) {
+                    setCategories( res.data );
+                }
+            } ).catch( () => {} );
+        }
+    }, [] );
 
     useEffect( () => {
         fetchProducts();
@@ -339,6 +385,12 @@ export default function EditableTable() {
                     value={ filters.search || '' }
                     onChange={ ( val ) => setFilters( { search: val } ) }
                     placeholder={ __( 'Search by name or SKU...', 'woo-price-manager' ) }
+                />
+                <SelectControl
+                    label={ __( 'Category', 'woo-price-manager' ) }
+                    value={ filters.category || '' }
+                    options={ buildCategoryOptions( categories ) }
+                    onChange={ ( val ) => setFilters( { category: val || null } ) }
                 />
                 <SelectControl
                     label={ __( 'Stock Status', 'woo-price-manager' ) }

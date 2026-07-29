@@ -101,6 +101,9 @@ final class AdminMenu
         }
 
         if (function_exists('rest_url') && function_exists('wp_create_nonce') && function_exists('esc_url_raw')) {
+            $catRepo = new \WPM\Infrastructure\Repository\CategoryRepository();
+            $categories = $catRepo->getAll();
+
             wp_localize_script(
                 'wpm-admin-script',
                 'wpmData',
@@ -109,6 +112,7 @@ final class AdminMenu
                     'nonce' => wp_create_nonce('wp_rest'),
                     'canManage' => $this->accessControl->canManagePricing(),
                     'version' => $version,
+                    'categories' => $categories,
                     'currency' => [
                         'symbol' => html_entity_decode((string) get_woocommerce_currency_symbol(), ENT_QUOTES, 'UTF-8'),
                         'position' => get_option('woocommerce_currency_pos', 'left'),

@@ -36,8 +36,19 @@ export default function BulkToolbar( { onAnnouncement } ) {
     const fixedDecreaseLabel = currencySymbol
         ? sprintf( __( 'Decrease Price (%s)', 'woo-price-manager' ), currencySymbol )
         : __( 'Decrease Price (Fixed)', 'woo-price-manager' );
+    const fixedSetLabel = currencySymbol
+        ? sprintf( __( 'Set Price (%s)', 'woo-price-manager' ), currencySymbol )
+        : __( 'Set Price (Fixed)', 'woo-price-manager' );
 
     const handlePreview = async () => {
+        if ( ! operationType.startsWith( 'stock_' ) ) {
+            const val = parseFloat( parameter );
+            if ( ( operationType === 'price_fixed_set' && val === 0 ) || ( operationType === 'price_percentage_decrease' && val === 100 ) ) {
+                if ( ! window.confirm( __( 'Warning: You are attempting to set the price to 0 (free). Do you wish to proceed?', 'woo-price-manager' ) ) ) {
+                    return;
+                }
+            }
+        }
         setError( null );
         try {
             const payload = {
@@ -100,6 +111,7 @@ export default function BulkToolbar( { onAnnouncement } ) {
                         { label: __( 'Decrease Price (%)', 'woo-price-manager' ), value: 'price_percentage_decrease' },
                         { label: fixedIncreaseLabel, value: 'price_fixed_increase' },
                         { label: fixedDecreaseLabel, value: 'price_fixed_decrease' },
+                        { label: fixedSetLabel, value: 'price_fixed_set' },
                         { label: __( 'Set Stock Quantity', 'woo-price-manager' ), value: 'stock_set' },
                         { label: __( 'Increase Stock Quantity', 'woo-price-manager' ), value: 'stock_increase' },
                         { label: __( 'Clear Stock Management', 'woo-price-manager' ), value: 'stock_clear' },

@@ -37,7 +37,23 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         ];
 
         if (!empty($filters['category']) && $filters['category'] !== 'null' && $filters['category'] !== 'undefined' && $filters['category'] !== 'all') {
-            $args['category'] = (array) $filters['category'];
+            $catFilters = (array) $filters['category'];
+            $catSlugs = [];
+            foreach ($catFilters as $catVal) {
+                if (is_numeric($catVal)) {
+                    if (function_exists('get_term')) {
+                        $term = get_term((int) $catVal, 'product_cat');
+                        if ($term instanceof \WP_Term && !is_wp_error($term)) {
+                            $catSlugs[] = $term->slug;
+                        }
+                    }
+                } elseif (is_string($catVal) && $catVal !== '') {
+                    $catSlugs[] = $catVal;
+                }
+            }
+            if (!empty($catSlugs)) {
+                $args['category'] = $catSlugs;
+            }
         }
         if (!empty($filters['stock_status']) && $filters['stock_status'] !== 'null' && $filters['stock_status'] !== 'undefined' && $filters['stock_status'] !== 'all') {
             $args['stock_status'] = (string) $filters['stock_status'];
@@ -181,8 +197,8 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         foreach ($products as $wcProduct) {
             if (is_object($wcProduct) && method_exists($wcProduct, 'get_id')) {
                 $pid = (int) $wcProduct->get_id();
-                $reg = $wcProduct->get_regular_price();
-                $sale = $wcProduct->get_sale_price();
+                $reg = method_exists($wcProduct, 'get_regular_price') ? $wcProduct->get_regular_price('edit') : '';
+                $sale = method_exists($wcProduct, 'get_sale_price') ? $wcProduct->get_sale_price('edit') : '';
                 [$dateFrom, $dateTo] = $this->extractSaleDates($wcProduct);
                 $snapshots[$pid] = new PriceSnapshot(
                     $pid,
@@ -237,8 +253,8 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
     private function mapWcProductToEntity(object $wcProduct): Product
     {
         $id = (int) $wcProduct->get_id();
-        $reg = $wcProduct->get_regular_price();
-        $sale = $wcProduct->get_sale_price();
+        $reg = method_exists($wcProduct, 'get_regular_price') ? $wcProduct->get_regular_price('edit') : '';
+        $sale = method_exists($wcProduct, 'get_sale_price') ? $wcProduct->get_sale_price('edit') : '';
         [$dateFrom, $dateTo] = $this->extractSaleDates($wcProduct);
         $priceSnapshot = new PriceSnapshot(
             $id,
@@ -302,8 +318,8 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         $parentId = method_exists($wcVariation, 'get_parent_id') ? (int) $wcVariation->get_parent_id() : 0;
         $attrs = method_exists($wcVariation, 'get_attributes') ? (array) $wcVariation->get_attributes() : [];
 
-        $reg = $wcVariation->get_regular_price();
-        $sale = $wcVariation->get_sale_price();
+        $reg = method_exists($wcVariation, 'get_regular_price') ? $wcVariation->get_regular_price('edit') : '';
+        $sale = method_exists($wcVariation, 'get_sale_price') ? $wcVariation->get_sale_price('edit') : '';
         [$dateFrom, $dateTo] = $this->extractSaleDates($wcVariation);
         $priceSnapshot = new PriceSnapshot(
             $id,

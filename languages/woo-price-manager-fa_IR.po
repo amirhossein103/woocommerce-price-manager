@@ -365,3 +365,24 @@ msgstr "در حال ویرایش %s"
 #, javascript-format
 msgid "Edit %s"
 msgstr "ویرایش %s"
+
+#: assets/src/js/components/EditableTable.jsx:266
+msgid "All Categories"
+msgstr "همه دسته‌بندی‌ها"
+
+#: assets/src/js/components/EditableTable.jsx:390
+msgid "Category"
+msgstr "دسته‌بندی"
+
+#: assets/src/js/components/EditableCell.jsx:59
+msgid "Warning: You are attempting to set the price to 0 (free). Do you wish to proceed?"
+msgstr "هشدار: شما در حال تنظیم قیمت روی ۰ (رایگان) هستید. آیا تمایل به ادامه دارید؟"
+
+#: assets/src/js/components/BulkToolbar.jsx:40
+#, javascript-format
+msgid "Set Price (%s)"
+msgstr "تعیین قیمت (%s)"
+
+#: assets/src/js/components/BulkToolbar.jsx:41
+msgid "Set Price (Fixed)"
+msgstr "تعیین قیمت (ثابت)"

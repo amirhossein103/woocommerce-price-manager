@@ -145,6 +145,7 @@
 /* === Filter Bar === */
 .wpm-filter-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--wpm-space-4);
     margin-bottom: var(--wpm-space-6);
     align-items: flex-end;
