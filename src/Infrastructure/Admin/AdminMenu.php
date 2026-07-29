@@ -101,8 +101,14 @@ final class AdminMenu
         }
 
         if (function_exists('rest_url') && function_exists('wp_create_nonce') && function_exists('esc_url_raw')) {
-            $catRepo = new \WPM\Infrastructure\Repository\CategoryRepository();
-            $categories = $catRepo->getAll();
+            $categories = function_exists('wp_cache_get') ? wp_cache_get('wpm_categories_list', 'wpm_categories') : false;
+            if ($categories === false) {
+                $catRepo = new \WPM\Infrastructure\Repository\CategoryRepository();
+                $categories = $catRepo->getAll();
+                if (function_exists('wp_cache_set')) {
+                    wp_cache_set('wpm_categories_list', $categories, 'wpm_categories', 3600);
+                }
+            }
 
             wp_localize_script(
                 'wpm-admin-script',
@@ -138,13 +144,15 @@ final class AdminMenu
         }
 
         if (function_exists('esc_html__') && function_exists('esc_attr__')) {
-            echo '<div class="wrap wpm-admin-wrap">';
-            echo '<h1 class="wp-heading-inline">' . esc_html__('WooCommerce Price Manager', 'woo-price-manager') . '</h1>';
-            echo '<hr class="wp-header-end">';
-            echo '<div id="wpm-root" class="wpm-app-root" role="main" aria-label="' . esc_attr__('Price Manager Application', 'woo-price-manager') . '">';
-            echo '<p class="wpm-loading">' . esc_html__('Loading Price Manager workspace...', 'woo-price-manager') . '</p>';
-            echo '</div>';
-            echo '</div>';
+            ?>
+            <div class="wrap wpm-admin-wrap">
+                <h1 class="wp-heading-inline"><?php echo esc_html__('WooCommerce Price Manager', 'woo-price-manager'); ?></h1>
+                <hr class="wp-header-end">
+                <div id="wpm-root" class="wpm-app-root" role="main" aria-label="<?php echo esc_attr__('Price Manager Application', 'woo-price-manager'); ?>">
+                    <p class="wpm-loading"><?php echo esc_html__('Loading Price Manager workspace...', 'woo-price-manager'); ?></p>
+                </div>
+            </div>
+            <?php
         }
     }
 }

@@ -64,7 +64,7 @@ final class HistoryController extends \WP_REST_Controller
         ]);
     }
 
-    public function checkPermission(): bool|\WP_Error
+    public function checkPermission(\WP_REST_Request $request): bool|\WP_Error
     {
         if (function_exists('is_user_logged_in') && !is_user_logged_in()) {
             return new \WP_Error('auth_failed', 'User not authenticated.', ['status' => 401]);
@@ -72,6 +72,15 @@ final class HistoryController extends \WP_REST_Controller
         if (function_exists('current_user_can') && !current_user_can('manage_product_pricing')) {
             return new \WP_Error('forbidden', 'User lacks manage_product_pricing capability.', ['status' => 403]);
         }
+        
+        $method = $request->get_method();
+        if ($method !== 'GET' && $method !== 'OPTIONS') {
+            $nonce = $request->get_header('x_wp_nonce');
+            if (!$nonce || !function_exists('wp_verify_nonce') || !wp_verify_nonce($nonce, 'wp_rest')) {
+                return new \WP_Error('invalid_nonce', 'Nonce verification failed.', ['status' => 403]);
+            }
+        }
+        
         return true;
     }
 
@@ -95,7 +104,10 @@ final class HistoryController extends \WP_REST_Controller
     public function rollback(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
     {
         $changeId = (int) $request->get_param('change_id');
-        $userId = function_exists('get_current_user_id') ? (int) get_current_user_id() : 1;
+        $userId = (int) get_current_user_id();
+        if ($userId <= 0) {
+            return new \WP_Error('unauthorized', 'Valid user identity required.', ['status' => 401]);
+        }
 
         try {
             $result = $this->rollbackService->rollback($changeId, $userId);

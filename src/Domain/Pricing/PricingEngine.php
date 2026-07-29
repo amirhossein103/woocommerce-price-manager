@@ -31,7 +31,8 @@ final class PricingEngine
     public function calculateBulkOperation(
         PriceSnapshot $currentSnapshot,
         BulkOperation $operation,
-        string $productName = 'Product'
+        string $productName = 'Product',
+        int $decimals = 2
     ): PriceCalculationResult {
         if (!$operation->isPriceOperation()) {
             return new PriceCalculationResult(
@@ -56,11 +57,11 @@ final class PricingEngine
         $newSale = $origSale;
 
         if ($target === 'regular_price' || $target === 'both') {
-            $newRegular = $this->applyFormula($origRegular, $type, $param);
+            $newRegular = $this->applyFormula($origRegular, $type, $param, $decimals);
         }
         if ($target === 'sale_price' || $target === 'both') {
             if ($origSale !== null || $type === BulkOperation::TYPE_FIXED_SET) {
-                $newSale = $this->applyFormula($origSale ?? 0.0, $type, $param);
+                $newSale = $this->applyFormula($origSale ?? 0.0, $type, $param, $decimals);
             }
         }
 
@@ -112,7 +113,7 @@ final class PricingEngine
         );
     }
 
-    private function applyFormula(?float $currentValue, string $operationType, float $parameter): ?float
+    private function applyFormula(?float $currentValue, string $operationType, float $parameter, int $decimals = 2): ?float
     {
         if ($currentValue === null && $operationType !== BulkOperation::TYPE_FIXED_SET) {
             return null;
@@ -140,6 +141,6 @@ final class PricingEngine
                 $result = $val;
         }
 
-        return round($result, 4);
+        return round($result, $decimals);
     }
 }

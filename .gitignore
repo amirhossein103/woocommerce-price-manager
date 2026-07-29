@@ -84,6 +84,7 @@ scratch/
 *.rar
 *.bak
 *.old
+*.phar
 
 # ==============================================================================
 # EXCLUSIONS (FILES EXPLICITLY REQUIRED IN PRODUCTION)

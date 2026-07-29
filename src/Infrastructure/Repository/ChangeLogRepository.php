@@ -133,17 +133,17 @@ final class ChangeLogRepository implements ChangeLogRepositoryInterface
         }
 
         $sql = $this->wpdb->prepare(
-            "SELECT id FROM {$this->table} WHERE product_id = %d ORDER BY id DESC LIMIT %d, 999999",
+            "DELETE FROM {$this->table} WHERE product_id = %d AND id NOT IN (
+                SELECT id FROM (
+                    SELECT id FROM {$this->table} WHERE product_id = %d ORDER BY id DESC LIMIT %d
+                ) tmp
+            )",
+            $productId,
             $productId,
             $limit
         );
-        $oldIds = $this->wpdb->get_col($sql);
-        if (empty($oldIds)) {
-            return 0;
-        }
 
-        $idsList = implode(',', array_map('intval', $oldIds));
-        $deleted = $this->wpdb->query("DELETE FROM {$this->table} WHERE id IN ({$idsList})");
+        $deleted = $this->wpdb->query($sql);
         return is_numeric($deleted) ? (int) $deleted : 0;
     }
 

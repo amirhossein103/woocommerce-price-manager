@@ -187,9 +187,11 @@ final class Plugin
         if (!function_exists('esc_html__')) {
             return;
         }
-        echo '<div class="notice notice-error"><p>' .
-            esc_html__('WooCommerce Price Manager requires WooCommerce to be installed and active.', 'woo-price-manager') .
-            '</p></div>';
+        ?>
+        <div class="notice notice-error">
+            <p><?php echo esc_html__('WooCommerce Price Manager requires WooCommerce to be installed and active.', 'woo-price-manager'); ?></p>
+        </div>
+        <?php
     }
 
     /**

@@ -347,7 +347,7 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
         $attrs = [];
         
         $isDefault = false;
-        if (!empty($parentDefaultAttributes) && !empty($rawAttrs)) {
+        if (!empty($parentDefaultAttributes) && !empty($rawAttrs) && count($parentDefaultAttributes) === count($rawAttrs)) {
             // Check if all parent defaults match the variation's attributes
             $matches = true;
             foreach ($parentDefaultAttributes as $defKey => $defValue) {

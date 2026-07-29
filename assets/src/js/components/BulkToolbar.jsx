@@ -53,7 +53,7 @@ export default function BulkToolbar( { onAnnouncement } ) {
         try {
             const payload = {
                 operation_type: operationType,
-                field: targetField,
+                target_field: targetField,
                 parameter: parseFloat( parameter ),
                 product_ids: selectedIds,
             };
@@ -72,7 +72,7 @@ export default function BulkToolbar( { onAnnouncement } ) {
         try {
             const payload = {
                 operation_type: operationType,
-                field: targetField,
+                target_field: targetField,
                 parameter: parseFloat( parameter ),
                 product_ids: selectedIds,
             };

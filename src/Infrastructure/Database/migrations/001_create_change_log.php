@@ -41,19 +41,12 @@ return new class {
         }
 
         // Enforce the 5-change retention limit per product on migration run
-        $productIds = $wpdb->get_col("SELECT DISTINCT product_id FROM {$table}");
-        if (!empty($productIds)) {
-            foreach ($productIds as $pid) {
-                $pid = (int) $pid;
-                $oldIds = $wpdb->get_col($wpdb->prepare(
-                    "SELECT id FROM {$table} WHERE product_id = %d ORDER BY id DESC LIMIT 5, 999999",
-                    $pid
-                ));
-                if (!empty($oldIds)) {
-                    $idsList = implode(',', array_map('intval', $oldIds));
-                    $wpdb->query("DELETE FROM {$table} WHERE id IN ({$idsList})");
-                }
-            }
-        }
+        $sqlPrune = "DELETE t1 FROM {$table} t1
+        JOIN (
+            SELECT id, DENSE_RANK() OVER (PARTITION BY product_id ORDER BY id DESC) as rnk
+            FROM {$table}
+        ) t2 ON t1.id = t2.id
+        WHERE t2.rnk > 5";
+        $wpdb->query($sqlPrune);
     }
 };

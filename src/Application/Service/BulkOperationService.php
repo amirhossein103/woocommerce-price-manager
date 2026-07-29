@@ -115,6 +115,15 @@ final class BulkOperationService
         $errors = [];
 
         $chunks = array_chunk($targetIds, 50);
+        $decimals = function_exists('wc_get_price_decimals') ? wc_get_price_decimals() : 2;
+        
+        if (function_exists('wp_defer_term_counting')) {
+            wp_defer_term_counting(true);
+        }
+        if (function_exists('wp_defer_comment_counting')) {
+            wp_defer_comment_counting(true);
+        }
+
         foreach ($chunks as $chunkIds) {
             if ($operation->isPriceOperation()) {
                 $snapshots = $this->productRepo->getPriceSnapshots($chunkIds);
@@ -124,7 +133,7 @@ final class BulkOperationService
                             throw new DomainException("Product ID {$id} not found.");
                         }
                         $snapshot = $snapshots[$id];
-                        $res = $this->pricingEngine->calculateBulkOperation($snapshot, $operation);
+                        $res = $this->pricingEngine->calculateBulkOperation($snapshot, $operation, 'Product', $decimals);
                         if (!$res->isValid) {
                             throw new DomainException("Validation violation: {$res->violation}");
                         }
@@ -209,6 +218,13 @@ final class BulkOperationService
                     }
                 }
             }
+        }
+        
+        if (function_exists('wp_defer_term_counting')) {
+            wp_defer_term_counting(false);
+        }
+        if (function_exists('wp_defer_comment_counting')) {
+            wp_defer_comment_counting(false);
         }
 
         return [

@@ -536,3 +536,13 @@
     background: #d0edfa !important;
 }
 
+
+/* === Utility Classes === */
+.wpm-opacity-50 { opacity: 0.5; }
+.wpm-flex-center-gap4 { display: flex; align-items: center; gap: 4px; }
+.wpm-icon-btn-small { min-width: 24px; padding: 2px 4px; font-size: 14px; line-height: 1; }
+.wpm-icon-btn-default { min-width: 24px; padding: 4px; fill: #8c8f94; }
+.wpm-icon-btn-default.is-default { fill: #f5cf04; }
+.wpm-info-icon { cursor: help; color: #8c8f94; font-size: 12px; margin-top: 2px; }
+.wpm-loading-stats { margin-left: 12px; display: inline-flex; align-items: center; gap: 6px; color: #2271b1; font-weight: 500; }
+.wpm-mb-16 { margin-bottom: 16px; }

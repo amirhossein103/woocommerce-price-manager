@@ -1,4 +1,4 @@
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, memo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, CheckboxControl, Notice, SearchControl, SelectControl, Spinner } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -10,7 +10,7 @@ import SaleScheduleModal from './SaleScheduleModal';
 import { formatPrice } from '../utils/formatters';
 import api from '../api';
 
-function VariationRow( { variation, parentId, parentManageStock, isSelected, onToggleSelect, onAnnouncement, onOpenSchedule } ) {
+const VariationRow = memo( function VariationRow( { variation, parentId, parentManageStock, isSelected, onToggleSelect, onAnnouncement, onOpenSchedule } ) {
     const { updateProduct, setDefaultVariation } = useDispatch( 'wpm/products' );
     const isVarManaged = !!( variation.stock?.is_managed ?? variation.stock?.manage_stock );
 
@@ -46,7 +46,7 @@ function VariationRow( { variation, parentId, parentManageStock, isSelected, onT
             </td>
             <td className="wpm-cell--stock">
                 { !isVarManaged ? (
-                    <span className="wpm-cell-readonly" style={{ opacity: 0.5 }}>—</span>
+                    <span className="wpm-cell-readonly wpm-opacity-50">—</span>
                 ) : (
                     <EditableCell
                         id={ variation.id }
@@ -86,7 +86,7 @@ function VariationRow( { variation, parentId, parentManageStock, isSelected, onT
                 />
             </td>
             <td className="wpm-cell--sale-price">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div className="wpm-flex-center-gap4">
                     <EditableCell
                         id={ variation.id }
                         field="sale_price"
@@ -101,7 +101,8 @@ function VariationRow( { variation, parentId, parentManageStock, isSelected, onT
                         className={`wpm-schedule-btn ${(variation.price?.date_on_sale_from || variation.price?.date_on_sale_to) ? 'is-scheduled' : ''}`}
                         onClick={ () => onOpenSchedule?.( { ...variation, name: `Variation #${variation.id}` } ) }
                         title={ (variation.price?.date_on_sale_from || variation.price?.date_on_sale_to) ? sprintf( __( 'Scheduled: %s to %s', 'woo-price-manager' ), variation.price?.date_on_sale_from || 'Now', variation.price?.date_on_sale_to || 'Forever' ) : __( 'Schedule Sale Dates', 'woo-price-manager' ) }
-                        style={{ minWidth: '24px', padding: '2px 4px', fontSize: '14px', lineHeight: 1 }}
+                        aria-label={ __( 'Schedule Sale Dates', 'woo-price-manager' ) }
+                        className={`wpm-schedule-btn wpm-icon-btn-small ${(variation.price?.date_on_sale_from || variation.price?.date_on_sale_to) ? 'is-scheduled' : ''}`}
                     >
                         📅
                     </Button>
@@ -125,7 +126,8 @@ function VariationRow( { variation, parentId, parentManageStock, isSelected, onT
                     } }
                     disabled={ variation.is_default }
                     title={ variation.is_default ? __( 'Current default variation', 'woo-price-manager' ) : __( 'Set as default variation', 'woo-price-manager' ) }
-                    style={{ minWidth: '24px', padding: '4px', fill: variation.is_default ? '#f5cf04' : '#8c8f94' }}
+                    aria-label={ variation.is_default ? __( 'Current default variation', 'woo-price-manager' ) : __( 'Set as default variation', 'woo-price-manager' ) }
+                    className={`wpm-set-default-btn wpm-icon-btn-default ${ variation.is_default ? 'is-default' : '' }`}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
                         { variation.is_default ? (
@@ -138,9 +140,9 @@ function VariationRow( { variation, parentId, parentManageStock, isSelected, onT
             </td>
         </tr>
     );
-}
+} );
 
-function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, onOpenHistory, onAnnouncement, onOpenSchedule } ) {
+const ProductRow = memo( function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, onOpenHistory, onAnnouncement, onOpenSchedule } ) {
     const [ isExpanded, setIsExpanded ] = useState( false );
     const { variations } = useSelect( ( select ) => ( {
         variations: select( 'wpm/products' ).getVariations( product.id ),
@@ -194,7 +196,7 @@ function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, on
         <>
             <tr className={ `wpm-row ${ isSelected ? 'wpm-row--selected' : '' }` }>
                 <td className="wpm-cell--checkbox">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div className="wpm-flex-center-gap4">
                         <CheckboxControl
                             checked={ isSelected }
                             onChange={ handleParentToggle }
@@ -203,7 +205,7 @@ function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, on
                         { isVariable && (
                             <span 
                                 title={ __( 'Selecting this product will apply bulk edits to all its variations.', 'woo-price-manager' ) } 
-                                style={{ cursor: 'help', color: '#8c8f94', fontSize: '12px', marginTop: '2px' }}
+                                className="wpm-info-icon"
                             >
                                 ℹ️
                             </span>
@@ -254,7 +256,7 @@ function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, on
                 </td>
                 <td className="wpm-cell--stock">
                     { !isManaged ? (
-                        <span className="wpm-cell-readonly" style={{ opacity: 0.5 }}>—</span>
+                        <span className="wpm-cell-readonly wpm-opacity-50">—</span>
                     ) : (
                         <EditableCell
                             id={ product.id }
@@ -301,7 +303,7 @@ function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, on
                     { isVariable ? (
                         <span className="wpm-cell-readonly">{ formatPrice( product.price?.sale_price ) }</span>
                     ) : (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <div className="wpm-flex-center-gap4">
                             <EditableCell
                                 id={ product.id }
                                 field="sale_price"
@@ -316,7 +318,8 @@ function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, on
                                 className={`wpm-schedule-btn ${(product.price?.date_on_sale_from || product.price?.date_on_sale_to) ? 'is-scheduled' : ''}`}
                                 onClick={ () => onOpenSchedule?.( product ) }
                                 title={ (product.price?.date_on_sale_from || product.price?.date_on_sale_to) ? sprintf( __( 'Scheduled: %s to %s', 'woo-price-manager' ), product.price?.date_on_sale_from || 'Now', product.price?.date_on_sale_to || 'Forever' ) : __( 'Schedule Sale Dates', 'woo-price-manager' ) }
-                                style={{ minWidth: '24px', padding: '2px 4px', fontSize: '14px', lineHeight: 1 }}
+                                aria-label={ __( 'Schedule Sale Dates', 'woo-price-manager' ) }
+                                className={`wpm-schedule-btn wpm-icon-btn-small ${(product.price?.date_on_sale_from || product.price?.date_on_sale_to) ? 'is-scheduled' : ''}`}
                             >
                                 📅
                             </Button>
@@ -348,7 +351,7 @@ function ProductRow( { product, isSelected, selectedIds = [], onToggleSelect, on
             ) ) }
         </>
     );
-}
+} );
 
 const buildCategoryOptions = ( cats = [] ) => {
     const options = [ { label: __( 'All Categories', 'woo-price-manager' ), value: '' } ];
@@ -448,7 +451,7 @@ export default function EditableTable() {
                 <div className="wpm-header__stats">
                     <span>{ sprintf( __( 'Total Products: %d', 'woo-price-manager' ), meta.total || 0 ) }</span>
                     { isLoading && (
-                        <span style={ { marginLeft: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#2271b1', fontWeight: '500' } }>
+                        <span className="wpm-loading-stats">
                             <Spinner /> { __( 'Updating catalog...', 'woo-price-manager' ) }
                         </span>
                     ) }
@@ -456,7 +459,7 @@ export default function EditableTable() {
             </header>
 
             { announcement && (
-                <div className="wpm-visible-notice" style={ { marginBottom: '16px' } }>
+                <div className="wpm-visible-notice wpm-mb-16">
                     <Notice
                         status={ announceType === 'assertive' ? 'error' : 'success' }
                         isDismissible
