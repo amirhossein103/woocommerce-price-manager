@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /**
  * Plugin Name: WooCommerce Price Manager
- * Plugin URI: https://github.com/amirhossein103/woocommerce-price-manager
+ * Plugin URI: https://rtl-theme.com/
  * Description: High-performance WooCommerce operations plugin for store managers and pricing professionals.
  * Version: 1.0.0
  * Requires PHP: 8.0
@@ -55,5 +55,14 @@ if (function_exists('register_activation_hook')) {
 if (function_exists('register_deactivation_hook')) {
     register_deactivation_hook(__FILE__, [\WPM\Plugin::class, 'deactivate']);
 }
-
 \WPM\Plugin::instance()->boot();
+
+if (function_exists('add_filter')) {
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), static function (array $links): array {
+        if (function_exists('admin_url') && function_exists('esc_html__') && function_exists('esc_url')) {
+            $manage_link = '<a href="' . esc_url(admin_url('admin.php?page=woo-price-manager')) . '">' . esc_html__('Manage Price', 'woo-price-manager') . '</a>';
+            array_unshift($links, $manage_link);
+        }
+        return $links;
+    });
+}
