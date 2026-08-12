@@ -429,6 +429,25 @@
 }
 
 /* === History Drawer / Modals === */
+.components-modal__frame.wpm-history-drawer {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    height: 100vh;
+    max-height: 100vh;
+    width: 400px;
+    max-width: 90vw;
+    border-radius: 0;
+    animation: slideInRight 0.3s forwards;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
 .wpm-history-list {
     list-style: none;
     padding: 0;

@@ -171,7 +171,10 @@ final class BulkOperationService
                             }
                         }
 
-                        $this->productRepo->updatePrice($id, $newReg, $newSale);
+                        $finalDateFrom = $operation->dateFrom ?? $snapshot->dateFrom;
+                        $finalDateTo = $operation->dateTo ?? $snapshot->dateTo;
+
+                        $this->productRepo->updatePrice($id, $newReg, $newSale, $finalDateFrom, $finalDateTo);
                         $succeeded++;
                     } catch (\Throwable $e) {
                         $failed++;

@@ -133,4 +133,44 @@ final class RollbackService
             'product' => $updatedProduct ? $updatedProduct->toArray() : [],
         ];
     }
+
+    /**
+     * Roll back an entire bulk operation by restoring all associated changes.
+     *
+     * @return array{succeeded: int, failed: int, errors: array}
+     */
+    public function rollbackBulkOperation(int $bulkOperationId, int $userId): array
+    {
+        $records = $this->changeLog->getRecordsByBulkId($bulkOperationId);
+        if (empty($records)) {
+            throw new DomainException("No records found for bulk operation #{$bulkOperationId}.");
+        }
+
+        $succeeded = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($records as $record) {
+            try {
+                // If it's already a rollback record, skip
+                if ($record->operationType === 'rollback') {
+                    continue;
+                }
+                $this->rollback($record->id, $userId);
+                $succeeded++;
+            } catch (\Throwable $e) {
+                $failed++;
+                $errors[] = [
+                    'record_id' => $record->id,
+                    'message' => $e->getMessage(),
+                ];
+            }
+        }
+
+        return [
+            'succeeded' => $succeeded,
+            'failed' => $failed,
+            'errors' => $errors,
+        ];
+    }
 }

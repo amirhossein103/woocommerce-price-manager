@@ -114,7 +114,7 @@ export default function EditableCell( { id, field, value, type = 'price', regula
                     value={ editValue }
                     onChange={ ( e ) => setEditValue( e.target.value ) }
                     onKeyDown={ handleKeyDown }
-                    onBlur={ handleSave }
+                    onBlur={ handleCancel }
                     className="wpm-cell__input"
                     aria-label={ sprintf( __( 'Editing %s', 'woo-price-manager' ), field ) }
                 />

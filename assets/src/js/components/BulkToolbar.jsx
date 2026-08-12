@@ -15,6 +15,8 @@ export default function BulkToolbar( { onAnnouncement } ) {
     const [ operationType, setOperationType ] = useState( 'price_percentage_increase' );
     const [ parameter, setParameter ] = useState( '10' );
     const [ targetField, setTargetField ] = useState( 'regular_price' );
+    const [ dateFrom, setDateFrom ] = useState( '' );
+    const [ dateTo, setDateTo ] = useState( '' );
     const [ isPreviewOpen, setIsPreviewOpen ] = useState( false );
     const [ previewData, setPreviewData ] = useState( null );
     const [ isExecuting, setIsExecuting ] = useState( false );
@@ -56,6 +58,8 @@ export default function BulkToolbar( { onAnnouncement } ) {
                 target_field: targetField,
                 parameter: parseFloat( parameter ),
                 product_ids: selectedIds,
+                date_from: targetField === 'sale_price' ? (dateFrom || null) : null,
+                date_to: targetField === 'sale_price' ? (dateTo || null) : null,
             };
             const res = await api.previewBulk( payload );
             setPreviewData( res );
@@ -75,6 +79,8 @@ export default function BulkToolbar( { onAnnouncement } ) {
                 target_field: targetField,
                 parameter: parseFloat( parameter ),
                 product_ids: selectedIds,
+                date_from: targetField === 'sale_price' ? (dateFrom || null) : null,
+                date_to: targetField === 'sale_price' ? (dateTo || null) : null,
             };
             const res = await api.executeBulk( payload );
             setIsExecuting( false );
@@ -147,6 +153,27 @@ export default function BulkToolbar( { onAnnouncement } ) {
                     onChange={ ( val ) => setParameter( val ) }
                     className="wpm-bulk-toolbar__input"
                 />
+
+                { targetField === 'sale_price' && ! operationType.startsWith( 'stock_' ) && (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <span style={{ color: '#8c8f94', fontSize: '12px' }}>{ __( 'Schedule:', 'woo-price-manager' ) }</span>
+                        <input
+                            type="date"
+                            value={ dateFrom }
+                            onChange={ ( e ) => setDateFrom( e.target.value ) }
+                            title={ __( 'Sale Start Date', 'woo-price-manager' ) }
+                            style={{ padding: '0 8px', height: '30px', fontSize: '13px', borderRadius: '4px', border: '1px solid #8c8f94', background: '#fff', color: '#3c434a' }}
+                        />
+                        <span style={{ color: '#8c8f94' }}>-</span>
+                        <input
+                            type="date"
+                            value={ dateTo }
+                            onChange={ ( e ) => setDateTo( e.target.value ) }
+                            title={ __( 'Sale End Date', 'woo-price-manager' ) }
+                            style={{ padding: '0 8px', height: '30px', fontSize: '13px', borderRadius: '4px', border: '1px solid #8c8f94', background: '#fff', color: '#3c434a' }}
+                        />
+                    </div>
+                ) }
 
                 <Button isPrimary onClick={ handlePreview }>
                     { __( 'Preview Changes', 'woo-price-manager' ) }

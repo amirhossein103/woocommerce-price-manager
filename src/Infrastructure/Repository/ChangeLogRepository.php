@@ -81,6 +81,47 @@ final class ChangeLogRepository implements ChangeLogRepositoryInterface
         return $records;
     }
 
+    public function getGlobalJobs(int $limit = 20): array
+    {
+        $usersTable = $this->wpdb->users;
+        $sql = $this->wpdb->prepare(
+            "SELECT cl.bulk_operation_id, COUNT(*) as affected_items, MAX(cl.created_at) as job_date, cl.field, cl.operation_type, u.display_name as user_name
+             FROM {$this->table} cl
+             LEFT JOIN {$usersTable} u ON cl.user_id = u.ID
+             WHERE cl.bulk_operation_id IS NOT NULL
+             GROUP BY cl.bulk_operation_id, cl.field, cl.operation_type, u.display_name
+             ORDER BY job_date DESC
+             LIMIT %d",
+            $limit
+        );
+
+        $results = $this->wpdb->get_results($sql, ARRAY_A);
+        return is_array($results) ? $results : [];
+    }
+
+    public function getRecordsByBulkId(int $bulkOperationId): array
+    {
+        $sql = $this->wpdb->prepare(
+            "SELECT cl.*
+             FROM {$this->table} cl
+             WHERE cl.bulk_operation_id = %d
+             ORDER BY cl.id DESC",
+            $bulkOperationId
+        );
+
+        $results = $this->wpdb->get_results($sql, ARRAY_A);
+        if (!is_array($results)) {
+            return [];
+        }
+
+        $records = [];
+        foreach ($results as $row) {
+            $records[] = $this->mapRowToEntity($row);
+        }
+
+        return $records;
+    }
+
     public function findById(int $id): ?ChangeRecord
     {
         $usersTable = $this->wpdb->users;

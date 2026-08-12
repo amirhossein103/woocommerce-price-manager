@@ -469,6 +469,13 @@ final class WooCommerceProductAdapter implements ProductRepositoryInterface
                 }
             }
 
+            if ($label === $taxKey) {
+                $label = urldecode($label);
+                if (str_starts_with($label, 'pa_')) {
+                    $label = substr($label, 3);
+                }
+            }
+
             if (str_starts_with($taxKey, 'pa_') && function_exists('get_term_by')) {
                 $term = get_term_by('slug', $decodedValue, $taxKey);
                 

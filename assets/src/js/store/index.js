@@ -10,6 +10,8 @@ const DEFAULT_STATE = {
     savingIds: {},
     variations: {},
     history: {},
+    globalHistory: [],
+    categories: [],
     error: null,
 };
 
@@ -22,6 +24,8 @@ const selectors = {
     isSaving: ( state, id ) => !! state.savingIds[ id ],
     getVariations: ( state, parentId ) => state.variations[ parentId ] || null,
     getHistory: ( state, productId ) => state.history[ productId ] || null,
+    getGlobalHistory: ( state ) => state.globalHistory,
+    getCategories: ( state ) => state.categories,
     getError: ( state ) => state.error,
 };
 
@@ -112,6 +116,10 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
                 ...state,
                 history: { ...state.history, [ action.productId ]: action.history }
             };
+        case 'FETCH_GLOBAL_HISTORY_SUCCESS':
+            return { ...state, globalHistory: action.history };
+        case 'FETCH_CATEGORIES_SUCCESS':
+            return { ...state, categories: action.categories };
         default:
             return state;
     }

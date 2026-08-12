@@ -20,6 +20,16 @@ export const actions = {
         return { type: 'CLEAR_SELECTION' };
     },
     // Thunks (Async Actions)
+    fetchCategories() {
+        return async ( { dispatch } ) => {
+            try {
+                const response = await api.getCategories();
+                dispatch( { type: 'FETCH_CATEGORIES_SUCCESS', categories: response.data || [] } );
+            } catch ( error ) {
+                console.error('Failed to fetch categories:', error);
+            }
+        };
+    },
     fetchProducts() {
         return async ( { dispatch, select } ) => {
             dispatch( { type: 'FETCH_START' } );
@@ -94,6 +104,32 @@ export const actions = {
                 return { success: true };
             } catch ( error ) {
                 dispatch( { type: 'SET_DEFAULT_VARIATION_ERROR', parentId, variationId, error } );
+                return { success: false, error };
+            }
+        };
+    },
+    fetchGlobalHistory() {
+        return async ( { dispatch } ) => {
+            dispatch( { type: 'FETCH_GLOBAL_HISTORY_START' } );
+            try {
+                const response = await api.getGlobalHistory();
+                dispatch( { type: 'FETCH_GLOBAL_HISTORY_SUCCESS', history: response.data || [] } );
+            } catch ( error ) {
+                dispatch( { type: 'FETCH_GLOBAL_HISTORY_ERROR', error: error.message || 'Failed to fetch global history' } );
+            }
+        };
+    },
+    rollbackBulkJob( bulkId ) {
+        return async ( { dispatch } ) => {
+            dispatch( { type: 'ROLLBACK_BULK_START', bulkId } );
+            try {
+                const response = await api.rollbackBulk( bulkId );
+                dispatch( { type: 'ROLLBACK_BULK_SUCCESS', bulkId, result: response.data || response } );
+                dispatch( actions.fetchProducts() );
+                dispatch( actions.fetchGlobalHistory() );
+                return { success: true, data: response.data || response };
+            } catch ( error ) {
+                dispatch( { type: 'ROLLBACK_BULK_ERROR', bulkId, error } );
                 return { success: false, error };
             }
         };

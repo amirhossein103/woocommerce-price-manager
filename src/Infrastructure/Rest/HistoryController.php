@@ -62,6 +62,34 @@ final class HistoryController extends \WP_REST_Controller
                 ],
             ],
         ]);
+
+        register_rest_route($this->namespace, '/history/global', [
+            [
+                'methods' => 'GET',
+                'callback' => [$this, 'getGlobalHistory'],
+                'permission_callback' => [$this, 'checkPermission'],
+                'args' => [
+                    'limit' => [
+                        'default' => 20,
+                        'sanitize_callback' => fn($val) => min(100, max(1, absint($val))),
+                    ],
+                ],
+            ],
+        ]);
+
+        register_rest_route($this->namespace, '/history/global/(?P<bulk_id>\d+)/rollback', [
+            [
+                'methods' => 'POST',
+                'callback' => [$this, 'rollbackBulk'],
+                'permission_callback' => [$this, 'checkPermission'],
+                'args' => [
+                    'bulk_id' => [
+                        'required' => true,
+                        'sanitize_callback' => 'absint',
+                    ],
+                ],
+            ],
+        ]);
     }
 
     public function checkPermission(\WP_REST_Request $request): bool|\WP_Error
@@ -111,6 +139,33 @@ final class HistoryController extends \WP_REST_Controller
 
         try {
             $result = $this->rollbackService->rollback($changeId, $userId);
+            return rest_ensure_response(['data' => $result]);
+        } catch (DomainException $e) {
+            return new \WP_Error('business_rule_violation', $e->getMessage(), ['status' => 422]);
+        }
+    }
+
+    public function getGlobalHistory(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $limit = (int) ($request->get_param('limit') ?? 20);
+        $jobs = $this->changeLogRepo->getGlobalJobs($limit);
+
+        return rest_ensure_response([
+            'data' => $jobs,
+            'meta' => ['total' => count($jobs)],
+        ]);
+    }
+
+    public function rollbackBulk(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
+    {
+        $bulkId = (int) $request->get_param('bulk_id');
+        $userId = (int) get_current_user_id();
+        if ($userId <= 0) {
+            return new \WP_Error('unauthorized', 'Valid user identity required.', ['status' => 401]);
+        }
+
+        try {
+            $result = $this->rollbackService->rollbackBulkOperation($bulkId, $userId);
             return rest_ensure_response(['data' => $result]);
         } catch (DomainException $e) {
             return new \WP_Error('business_rule_violation', $e->getMessage(), ['status' => 422]);

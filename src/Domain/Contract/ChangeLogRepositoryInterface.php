@@ -33,6 +33,20 @@ interface ChangeLogRepositoryInterface
     public function getByProduct(int $productId, int $limit = 5): array;
 
     /**
+     * Get aggregated global bulk jobs.
+     *
+     * @return array
+     */
+    public function getGlobalJobs(int $limit = 20): array;
+
+    /**
+     * Get all individual change records tied to a specific bulk operation ID.
+     *
+     * @return ChangeRecord[]
+     */
+    public function getRecordsByBulkId(int $bulkOperationId): array;
+
+    /**
      * Get a single change record by ID.
      */
     public function findById(int $id): ?ChangeRecord;

@@ -4,6 +4,7 @@ import { Button, CheckboxControl, Notice, SearchControl, SelectControl, Spinner 
 import { useDispatch, useSelect } from '@wordpress/data';
 import EditableCell from './EditableCell';
 import HistoryDrawer from './HistoryDrawer';
+import GlobalHistoryDrawer from './GlobalHistoryDrawer';
 import BulkToolbar from './BulkToolbar';
 import LiveRegion from './LiveRegion';
 import SaleScheduleModal from './SaleScheduleModal';
@@ -226,6 +227,7 @@ const ProductRow = memo( function ProductRow( { product, isSelected, selectedIds
                                 isLink
                                 onClick={ handleToggleExpand }
                                 className="wpm-expand-toggle"
+                                aria-expanded={ isExpanded }
                             >
                                 { isExpanded ? __( '▲ Hide Variations', 'woo-price-manager' ) : __( '▼ Show Variations', 'woo-price-manager' ) }
                             </Button>
@@ -385,28 +387,25 @@ const buildCategoryOptions = ( cats = [] ) => {
 };
 
 export default function EditableTable() {
-    const { products, meta, filters, selectedIds, isLoading } = useSelect( ( select ) => ( {
+    const { products, meta, filters, selectedIds, isLoading, categories } = useSelect( ( select ) => ( {
         products: select( 'wpm/products' ).getProducts(),
         meta: select( 'wpm/products' ).getMeta(),
         filters: select( 'wpm/products' ).getFilters(),
         selectedIds: select( 'wpm/products' ).getSelectedIds(),
         isLoading: select( 'wpm/products' ).isLoading(),
+        categories: select( 'wpm/products' ).getCategories(),
     } ) );
 
-    const { fetchProducts, setFilters, setPage, toggleSelection, selectAll, clearSelection, setSelection } = useDispatch( 'wpm/products' );
-    const [ categories, setCategories ] = useState( window.wpmData?.categories || [] );
+    const { fetchProducts, setFilters, setPage, toggleSelection, selectAll, clearSelection, setSelection, fetchCategories } = useDispatch( 'wpm/products' );
     const [ historyProduct, setHistoryProduct ] = useState( null );
+    const [ isGlobalHistoryOpen, setIsGlobalHistoryOpen ] = useState( false );
     const [ scheduleItem, setScheduleItem ] = useState( null );
     const [ announcement, setAnnouncement ] = useState( '' );
     const [ announceType, setAnnounceType ] = useState( 'polite' );
 
     useEffect( () => {
         if ( ! categories.length ) {
-            api.getCategories().then( ( res ) => {
-                if ( res && res.data ) {
-                    setCategories( res.data );
-                }
-            } ).catch( () => {} );
+            fetchCategories();
         }
     }, [] );
 
@@ -444,14 +443,31 @@ export default function EditableTable() {
             <LiveRegion message={ announcement } type={ announceType } />
 
             <header className="wpm-header">
-                <h1>{ __( 'WooCommerce Price & Stock Manager', 'woo-price-manager' ) }</h1>
-                <div className="wpm-header__stats">
-                    <span>{ sprintf( __( 'Total Products: %d', 'woo-price-manager' ), meta.total || 0 ) }</span>
-                    { isLoading && (
-                        <span className="wpm-loading-stats">
-                            <Spinner /> { __( 'Updating catalog...', 'woo-price-manager' ) }
-                        </span>
-                    ) }
+                <div>
+                    <h1>{ __( 'WooCommerce Price & Stock Manager', 'woo-price-manager' ) }</h1>
+                    <div className="wpm-header__stats">
+                        <span>{ sprintf( __( 'Total Products: %d', 'woo-price-manager' ), meta.total || 0 ) }</span>
+                        { isLoading && (
+                            <span className="wpm-loading-stats">
+                                <Spinner /> { __( 'Updating catalog...', 'woo-price-manager' ) }
+                            </span>
+                        ) }
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    <Button 
+                        isSecondary 
+                        onClick={ () => setIsGlobalHistoryOpen( true ) }
+                    >
+                        { __( 'Global Jobs History', 'woo-price-manager' ) }
+                    </Button>
+                    <Button 
+                        isPrimary 
+                        onClick={ fetchProducts } 
+                        disabled={ isLoading }
+                    >
+                        { isLoading ? __( 'Refreshing...', 'woo-price-manager' ) : __( 'Refresh Data', 'woo-price-manager' ) }
+                    </Button>
                 </div>
             </header>
 
@@ -576,6 +592,12 @@ export default function EditableTable() {
                 productName={ historyProduct?.name }
                 isOpen={ !! historyProduct }
                 onClose={ () => setHistoryProduct( null ) }
+                onAnnouncement={ handleAnnouncement }
+            />
+
+            <GlobalHistoryDrawer
+                isOpen={ isGlobalHistoryOpen }
+                onClose={ () => setIsGlobalHistoryOpen( false ) }
                 onAnnouncement={ handleAnnouncement }
             />
 

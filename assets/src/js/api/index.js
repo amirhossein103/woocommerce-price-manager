@@ -15,6 +15,14 @@ const api = {
     },
 
     /**
+     * Get categories list.
+     * @return {Promise<Object>} API response.
+     */
+    async getCategories() {
+        return apiFetch( { path: `${ NAMESPACE }/categories` } );
+    },
+
+    /**
      * Update single product or variation price/stock.
      * @param {number} id Product ID.
      * @param {Object} changes Key-value pairs to update.
@@ -96,6 +104,23 @@ const api = {
             path: `${ NAMESPACE }/products/${ parentId }/default-variation`,
             method: 'PUT',
             data: { variation_id: variationId },
+        } );
+    },
+
+    /**
+     * Get global bulk operation history.
+     */
+    async getGlobalHistory() {
+        return apiFetch( { path: `${ NAMESPACE }/history/global` } );
+    },
+
+    /**
+     * Roll back an entire bulk operation.
+     */
+    async rollbackBulk( bulkId ) {
+        return apiFetch( {
+            path: `${ NAMESPACE }/history/global/${ bulkId }/rollback`,
+            method: 'POST',
         } );
     }
 };
